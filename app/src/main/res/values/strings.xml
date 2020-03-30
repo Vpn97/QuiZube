@@ -6,4 +6,12 @@
     <string name="sign_up">Sign Up</string>
     <string name="sign_in">Sign In</string>
     <string name="quizube">Q  u i Z u b e</string>
+
+
+
+    <string name="facebook_app_id">166087761146311</string>
+    <string name="fb_login_protocol_scheme">fb166087761146311</string>
+    <string name="user_data">user_data</string>
+
+
 </resources>

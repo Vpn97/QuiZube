@@ -1,188 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <data>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_undraw_reading"
-            tools:srcCompat="@drawable/ic_undraw_reading" />
+        <variable
+            name="clickListener"
+            type="com.apkzube.quizube.activity.LoginActivity.LoginActivityClickListener" />
+        
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|center"
-            android:layout_marginTop="32dp"
-            android:fontFamily="@font/font"
-            android:text="@string/quizube"
-            android:textColor="@color/colorAccent"
-            android:textSize="42sp"
-            android:textStyle="bold" />
-
-    </FrameLayout>
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_height="match_parent"
+        android:onClick="@{clickListener::signInWithGoogle}"
+        tools:context=".activity.LoginActivity">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/crdGoogle"
+        <FrameLayout
+            android:id="@+id/frameLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sign_button_hight"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/google_btn"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="2dp"
-            android:maxWidth="200dp"
-            app:layout_constraintBottom_toTopOf="@+id/crdFacebook"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="@dimen/sign_button_hight"
-                android:layout_height="@dimen/sign_button_hight"
-                android:padding="16dp"
-                android:src="@drawable/googleg_disabled_color_18"
-                android:tint="@color/white"
-                app:srcCompat="@drawable/googleg_disabled_color_18" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_undraw_reading"
+                tools:srcCompat="@drawable/ic_undraw_reading" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="16dp"
-                android:fontFamily="@font/popin"
-                android:text="@string/sign_with_google"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-        </androidx.cardview.widget.CardView>
+                android:layout_gravity="top|center"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/font"
+                android:text="@string/quizube"
+                android:textColor="@color/colorAccent"
+                android:textSize="42sp"
+                android:textStyle="bold" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/crdFacebook"
+        </FrameLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sign_button_hight"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:maxWidth="200dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/facebook_btn"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="2dp"
-            app:layout_constraintBottom_toTopOf="@+id/textView"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="@dimen/sign_button_hight"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/crdGoogle"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/sign_button_hight"
-                android:src="@drawable/ic_facebook"
-                app:srcCompat="@drawable/ic_facebook" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/google_btn"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="2dp"
+                android:maxWidth="200dp"
+                app:layout_constraintBottom_toTopOf="@+id/crdFacebook"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="@dimen/sign_button_hight"
+                    android:layout_height="@dimen/sign_button_hight"
+                    android:padding="16dp"
+                    android:src="@drawable/googleg_disabled_color_18"
+                    android:tint="@color/white"
+                    app:srcCompat="@drawable/googleg_disabled_color_18" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="16dp"
+                    android:fontFamily="@font/popin"
+                    android:text="@string/sign_with_google"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/crdFacebook"
+                android:layout_width="match_parent"
+                android:onClick="@{clickListener::signInWithFacebook}"
+                android:layout_height="@dimen/sign_button_hight"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:maxWidth="200dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/facebook_btn"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="2dp"
+                app:layout_constraintBottom_toTopOf="@+id/textView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <com.facebook.login.widget.LoginButton
+                    android:id="@+id/btnFbLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    />
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="@dimen/sign_button_hight"
+                    android:layout_height="@dimen/sign_button_hight"
+                    android:src="@drawable/ic_facebook"
+                    app:srcCompat="@drawable/ic_facebook" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="16dp"
+                    android:fontFamily="@font/popin"
+                    android:text="@string/sign_with_facebook"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </androidx.cardview.widget.CardView>
 
             <TextView
+                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="@font/popin"
-                android:text="@string/sign_with_facebook"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-        </androidx.cardview.widget.CardView>
+                android:text="@string/loing_with"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/popin"
-            android:text="@string/loing_with"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:maxWidth="200dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@+id/textView2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:maxWidth="200dp"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/textView2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+                <Button
+                    android:id="@+id/btnSignUp"
+                    style="@style/AppTheme.RoundedCornerMaterialButton"
+                    android:layout_width="0dp"
+                    android:onClick="@{clickListener::signUp}"
+                    android:layout_height="@dimen/sign_button_hight"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/popin"
+                    android:text="@string/sign_up"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
 
-            <Button
-                android:id="@+id/btnSignUp"
-                style="@style/AppTheme.RoundedCornerMaterialButton"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/sign_button_hight"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
+                <Button
+                    android:id="@+id/btnSignIn"
+                    style="@style/AppTheme.RoundedCornerMaterialButton"
+                    android:layout_width="0dp"
+                    android:onClick="@{clickListener::signIn}"
+                    android:layout_height="@dimen/sign_button_hight"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/popin"
+                    android:text="@string/sign_in"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="@font/popin"
-                android:text="@string/sign_up"
-                android:textAllCaps="false"
-                android:textColor="@color/white" />
+                android:gravity="center"
+                android:text="apkZube"
+                android:textAlignment="center"
+                android:textColor="@color/apkzube_title"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
-                android:id="@+id/btnSignIn"
-                style="@style/AppTheme.RoundedCornerMaterialButton"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/sign_button_hight"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/popin"
-                android:text="@string/sign_in"
-                android:textAllCaps="false"
-                android:textColor="@color/white" />
 
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/popin"
-            android:gravity="center"
-            android:text="apkZube"
-            android:textAlignment="center"
-            android:textColor="@color/apkzube_title"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
