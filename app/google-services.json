@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "546743884693",
+    "firebase_url": "https://quizube-68cc4.firebaseio.com",
+    "project_id": "quizube-68cc4",
+    "storage_bucket": "quizube-68cc4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:546743884693:android:dbdc1903774dd06a80f49c",
+        "android_client_info": {
+          "package_name": "com.apkzube.quizube"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "546743884693-maa7gkhm7mufdqjlug6g8a22ko3s3tsi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apkzube.quizube",
+            "certificate_hash": "b98d1ad52a532a8645ea5d0889c0b8986613c6ae"
+          }
+        },
+        {
+          "client_id": "546743884693-vud120aq19am2af0bdvsvh8geub3hosj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2JbKdd1hqxbHD3vy_gGpcTe2ONCyCE9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "546743884693-vud120aq19am2af0bdvsvh8geub3hosj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

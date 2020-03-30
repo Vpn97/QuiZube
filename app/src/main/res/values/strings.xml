@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">QuiZube</string>
+    <string name="sign_with_google">Sign-In with Google</string>
+    <string name="sign_with_facebook">Sign-in with Facebook</string>
+    <string name="loing_with">OR WITH EMAIL</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="quizube">Q  u i Z u b e</string>
+</resources>
