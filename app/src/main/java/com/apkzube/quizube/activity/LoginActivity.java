@@ -34,7 +34,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -90,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     Toast.makeText(LoginActivity.this, "Login By FaceBook " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                                    storage.write(Constants.LOGIN_TYPE,Constants.LOGIN_FACEBOOK);
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(LoginActivity.this, "Authentication failed Facebook.", Toast.LENGTH_SHORT).show();
@@ -124,8 +124,10 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Login By Google : " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
                 break;
             case 2:
-                //Toast.makeText(this, "Login By Facebook : "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                FirebaseUser user = mAuth.getCurrentUser();
+                Toast.makeText(this, "Login By Facebook : "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
                 break;
+
             default:
                 Toast.makeText(this, "NO User Login", Toast.LENGTH_SHORT).show();
 
@@ -157,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         public void signUp(View view) {
-
+            startActivityForResult(new Intent(context,SignUp.class),Constants.SIGN_UP);
         }
     }
 

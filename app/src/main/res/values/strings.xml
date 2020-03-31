@@ -8,10 +8,16 @@
     <string name="quizube">Q  u i Z u b e</string>
 
 
-
     <string name="facebook_app_id">166087761146311</string>
     <string name="fb_login_protocol_scheme">fb166087761146311</string>
     <string name="user_data">user_data</string>
+    <string name="user_id">USER ID</string>
+    <string name="user_name">USER NAME</string>
+    <string name="email_id">EMAIL ID</string>
+    <string name="password">PASSWORD</string>
+    <string name="confirm_password">CONFIRM PASSWORD</string>
+    <string name="user_id_already">user id  already exist</string>
+    <string name="not_valid_user_id">not valid</string>
 
 
 </resources>
