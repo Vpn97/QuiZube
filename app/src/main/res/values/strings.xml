@@ -18,6 +18,14 @@
     <string name="confirm_password">CONFIRM PASSWORD</string>
     <string name="user_id_already">user id  already exist</string>
     <string name="not_valid_user_id">not valid</string>
+    <string name="enter_email_msg">enter valid email id</string>
+    <string name="pasword_dosenot_match">password doesn\'t match</string>
+    <string name="server_error">server error please try again later</string>
+    <string name="user_id_cannot_be_empty">enter valid user id</string>
+    <string name="enter_valid_user_name">enter valid name</string>
+    <string name="password_can_be">enter valid password</string>
+    <string name="password_length_msg">password length should be between 6 and 20</string>
+    <string name="user_id_length_msg">user id length should be between 6 and 30 char</string>
 
 
 </resources>

@@ -27,5 +27,6 @@
     <color name="text_color">#000000</color>
     <color name="anim_back">#F1F2F5</color>
     <color name="apkzube_title">#43A047</color>
+    <color name="error_text">#E53935</color>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.apkzube.quizube.model;
+package com.apkzube.quizube.model.registration;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
