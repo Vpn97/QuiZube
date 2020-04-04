@@ -3,6 +3,7 @@ package com.apkzube.quizube.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
@@ -51,22 +52,13 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
         model = ViewModelProviders.of(this).get(SignUpViewModel.class);
         model.setOnRegistrationEvent(this);
         signUpBinding.setModel(model);
-
-
     }
 
     private void setEvent() {
 
-
-        signUpBinding.txtUserId.getEditText().addTextChangedListener(new TextWatcher() {
+        model.getUserId().observe(this, new Observer<String>() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String userIdNew = charSequence.toString();
+            public void onChanged(String userIdNew) {
 
                 if (userIdNew != null && userIdNew.matches(Constants.USER_ID_REGEX) && userIdNew.length() >= 6 && userIdNew.length() < 30) {
 
@@ -103,23 +95,24 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
                     }
                 }
             }
+        });
 
+        model.getUserName().observe(this, new Observer<String>() {
             @Override
-            public void afterTextChanged(Editable editable) {
-
+            public void onChanged(String name) {
+                if (TextUtils.isEmpty(name)) {
+                    signUpBinding.txtUserName.setErrorEnabled(true);
+                    signUpBinding.txtUserName.setError(getString(R.string.enter_valid_user_name));
+                } else {
+                    signUpBinding.txtUserName.setErrorEnabled(false);
+                    signUpBinding.txtUserName.setError("");
+                }
             }
         });
 
-
-        signUpBinding.txtEmailId.getEditText().addTextChangedListener(new TextWatcher() {
+        model.getEmail().observe(this, new Observer<String>() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String email = charSequence.toString();
+            public void onChanged(String email) {
                 if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     signUpBinding.txtEmailId.setErrorEnabled(true);
                     signUpBinding.txtEmailId.setError(getString(R.string.enter_email_msg));
@@ -128,47 +121,11 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
                     signUpBinding.txtEmailId.setError("");
                 }
             }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
         });
 
-        signUpBinding.txtConfPassword.getEditText().addTextChangedListener(new TextWatcher() {
+        model.getPassword().observe(this, new Observer<String>() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String password = charSequence.toString();
-
-                if (!password.equals(signUpBinding.txtPassword.getEditText().getText().toString())) {
-                    signUpBinding.txtConfPassword.setErrorEnabled(true);
-                    signUpBinding.txtConfPassword.setError(getString(R.string.pasword_dosenot_match));
-                } else {
-                    signUpBinding.txtConfPassword.setErrorEnabled(false);
-                    signUpBinding.txtConfPassword.setError("");
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-
-
-        signUpBinding.txtPassword.getEditText().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String password = charSequence.toString();
+            public void onChanged(String password) {
                 if (TextUtils.isEmpty(password)) {
                     signUpBinding.txtPassword.setErrorEnabled(true);
                     signUpBinding.txtPassword.setError(getString(R.string.password_can_be));
@@ -180,37 +137,20 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
                     signUpBinding.txtPassword.setError("");
                 }
             }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
         });
 
-        signUpBinding.txtUserName.getEditText().addTextChangedListener(new TextWatcher() {
+        model.getConfimPassword().observe(this, new Observer<String>() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String name = charSequence.toString();
-                if (TextUtils.isEmpty(name)) {
-                    signUpBinding.txtUserName.setErrorEnabled(true);
-                    signUpBinding.txtUserName.setError(getString(R.string.enter_valid_user_name));
+            public void onChanged(String password) {
+                if (!password.equals(signUpBinding.txtPassword.getEditText().getText().toString())) {
+                    signUpBinding.txtConfPassword.setErrorEnabled(true);
+                    signUpBinding.txtConfPassword.setError(getString(R.string.pasword_dosenot_match));
                 } else {
-                    signUpBinding.txtUserName.setErrorEnabled(false);
-                    signUpBinding.txtUserName.setError("");
+                    signUpBinding.txtConfPassword.setErrorEnabled(false);
+                    signUpBinding.txtConfPassword.setError("");
                 }
             }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
         });
-
 
     }
 
@@ -229,7 +169,6 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
                     } else {
                         errorMsg.append(e.getMessage()).append("\n");
                     }
-
                 }
             } else {
                 errorMsg.append(getString(R.string.server_error));
