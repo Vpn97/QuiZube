@@ -47,8 +47,8 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
     }
 
     private void allocation() {
-        signUpBinding= DataBindingUtil.setContentView(this,R.layout.activity_sign_up);
-        model=ViewModelProviders.of(this).get(SignUpViewModel.class);
+        signUpBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up);
+        model = ViewModelProviders.of(this).get(SignUpViewModel.class);
         model.setUserMst(new RegUserMst());
         model.setOnRegistrationEvent(this);
         signUpBinding.setModel(model);
@@ -67,37 +67,38 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String userIdNew=charSequence.toString();
+                String userIdNew = charSequence.toString();
 
-                if(userIdNew!=null && userIdNew.matches(Constants.USER_ID_REGEX) && userIdNew.length()>=6 && userIdNew.length()<30){
+                if (userIdNew != null && userIdNew.matches(Constants.USER_ID_REGEX) && userIdNew.length() >= 6 && userIdNew.length() < 30) {
 
-                    UserRegistrationService registrationService= UserRegistrationServiceImpl.getService();
-                    final Call<Count> countCall=registrationService.getIsValidUser(userIdNew);
+                    UserRegistrationService registrationService = UserRegistrationServiceImpl.getService();
+                    final Call<Count> countCall = registrationService.getIsValidUser(userIdNew);
                     countCall.enqueue(new Callback<Count>() {
                         @Override
                         public void onResponse(Call<Count> call, Response<Count> response) {
-                            Count mCount=response.body();
-                            if(null!=mCount){
-                                if(mCount.getCount()>0){
+                            Count mCount = response.body();
+                            if (null != mCount) {
+                                if (mCount.getCount() > 0) {
                                     signUpBinding.txtUserId.setErrorEnabled(true);
                                     signUpBinding.txtUserId.setError(getString(R.string.user_id_already));
-                                }else if(mCount.getCount()==0){
+                                } else if (mCount.getCount() == 0) {
                                     signUpBinding.txtUserId.setErrorEnabled(false);
                                 }
                             }
                         }
+
                         @Override
                         public void onFailure(Call<Count> call, Throwable t) {
-                            Log.d(Constants.TAG, "onFailure: onFocusChange"+t.getMessage());
+                            Log.d(Constants.TAG, "onFailure: onFocusChange" + t.getMessage());
                         }
                     });
 
-                }else{
+                } else {
                     Log.d(Constants.TAG, "onTextChanged: not valid");
-                    if(userIdNew.matches(Constants.USER_ID_REGEX)){
+                    if (userIdNew.matches(Constants.USER_ID_REGEX)) {
                         signUpBinding.txtUserId.setErrorEnabled(true);
                         signUpBinding.txtUserId.setError(getString(R.string.user_id_length_msg));
-                    }else{
+                    } else {
                         signUpBinding.txtUserId.setErrorEnabled(true);
                         signUpBinding.txtUserId.setError(getString(R.string.not_valid_user_id));
                     }
@@ -111,7 +112,6 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
         });
 
 
-
         signUpBinding.txtEmailId.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -120,18 +120,18 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String email=charSequence.toString();
-                if(TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                String email = charSequence.toString();
+                if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     signUpBinding.txtEmailId.setErrorEnabled(true);
                     signUpBinding.txtEmailId.setError(getString(R.string.enter_email_msg));
-                }else{
+                } else {
                     signUpBinding.txtEmailId.setErrorEnabled(false);
                     signUpBinding.txtEmailId.setError("");
                 }
             }
 
             @Override
-            public void afterTextChanged(Editable editable){
+            public void afterTextChanged(Editable editable) {
             }
         });
 
@@ -143,12 +143,12 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String password=charSequence.toString();
+                String password = charSequence.toString();
 
-                if(!password.equals(signUpBinding.txtPassword.getEditText().getText().toString())){
+                if (!password.equals(signUpBinding.txtPassword.getEditText().getText().toString())) {
                     signUpBinding.txtConfPassword.setErrorEnabled(true);
                     signUpBinding.txtConfPassword.setError(getString(R.string.pasword_dosenot_match));
-                }else{
+                } else {
                     signUpBinding.txtConfPassword.setErrorEnabled(false);
                     signUpBinding.txtConfPassword.setError("");
                 }
@@ -169,14 +169,14 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String password=charSequence.toString();
-                if(TextUtils.isEmpty(password)){
+                String password = charSequence.toString();
+                if (TextUtils.isEmpty(password)) {
                     signUpBinding.txtPassword.setErrorEnabled(true);
                     signUpBinding.txtPassword.setError(getString(R.string.password_can_be));
-                }else if((password.length()<6 || password.length()>20)){
+                } else if ((password.length() < 6 || password.length() > 20)) {
                     signUpBinding.txtPassword.setErrorEnabled(true);
                     signUpBinding.txtPassword.setError(getString(R.string.password_length_msg));
-                }else{
+                } else {
                     signUpBinding.txtPassword.setErrorEnabled(false);
                     signUpBinding.txtPassword.setError("");
                 }
@@ -196,11 +196,11 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String name=charSequence.toString();
-                if(TextUtils.isEmpty(name)){
+                String name = charSequence.toString();
+                if (TextUtils.isEmpty(name)) {
                     signUpBinding.txtUserName.setErrorEnabled(true);
                     signUpBinding.txtUserName.setError(getString(R.string.enter_valid_user_name));
-                }else{
+                } else {
                     signUpBinding.txtUserName.setErrorEnabled(false);
                     signUpBinding.txtUserName.setError("");
                 }
@@ -213,27 +213,26 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
         });
 
 
-
     }
 
     @Override
     public void onRegistrationSuccess(RegistratoinResponse response) {
         Toast.makeText(this, "Registration Success", Toast.LENGTH_SHORT).show();
-        if(response.isStatus()){
+        if (response.isStatus()) {
             finish();
-        }else{
-            StringBuilder errorMsg= new StringBuilder();
-            if(null!=response.getErrors()) {
+        } else {
+            StringBuilder errorMsg = new StringBuilder();
+            if (null != response.getErrors()) {
                 for (Error e : response.getErrors()) {
-                    if(e.getCode().equalsIgnoreCase("REG005")){
+                    if (e.getCode().equalsIgnoreCase("REG005")) {
                         signUpBinding.txtEmailId.setErrorEnabled(true);
                         signUpBinding.txtEmailId.setError(e.getMessage());
-                    }else{
+                    } else {
                         errorMsg.append(e.getMessage()).append("\n");
                     }
 
                 }
-            }else{
+            } else {
                 errorMsg.append(getString(R.string.server_error));
             }
             signUpBinding.txtError.setText(errorMsg);
@@ -244,47 +243,47 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
     @Override
     public void onRegistrationFail(RegistratoinResponse response) {
         Toast.makeText(this, "Registration Fail", Toast.LENGTH_SHORT).show();
-        StringBuilder errorMsg= new StringBuilder();
-        if(null!=response.getErrors() && response.getErrors().size()>0) {
+        StringBuilder errorMsg = new StringBuilder();
+        if (null != response.getErrors() && response.getErrors().size() > 0) {
             for (Error e : response.getErrors()) {
 
-                if(e.getCode().equalsIgnoreCase(ERROR_CODE.REG001.toString())){
+                if (e.getCode().equalsIgnoreCase(ERROR_CODE.REG001.toString())) {
                     signUpBinding.txtUserId.setErrorEnabled(true);
                     signUpBinding.txtUserId.setError(e.getMessage());
 
-                }else if(e.getCode().equalsIgnoreCase(ERROR_CODE.REG002.toString())){
+                } else if (e.getCode().equalsIgnoreCase(ERROR_CODE.REG002.toString())) {
                     signUpBinding.txtUserName.setErrorEnabled(true);
                     signUpBinding.txtUserName.setError(e.getMessage());
 
-                }else if(e.getCode().equalsIgnoreCase(ERROR_CODE.REG003.toString())){
+                } else if (e.getCode().equalsIgnoreCase(ERROR_CODE.REG003.toString())) {
                     signUpBinding.txtEmailId.setErrorEnabled(true);
                     signUpBinding.txtEmailId.setError(e.getMessage());
 
-                }else if(e.getCode().equalsIgnoreCase(ERROR_CODE.REG004.toString())){
+                } else if (e.getCode().equalsIgnoreCase(ERROR_CODE.REG004.toString())) {
                     signUpBinding.txtPassword.setErrorEnabled(true);
                     signUpBinding.txtPassword.setError(e.getMessage());
 
-                }else if(e.getCode().equalsIgnoreCase(ERROR_CODE.REG005.toString())){
+                } else if (e.getCode().equalsIgnoreCase(ERROR_CODE.REG005.toString())) {
                     signUpBinding.txtConfPassword.setErrorEnabled(true);
                     signUpBinding.txtConfPassword.setError(e.getMessage());
 
-                }else if(e.getCode().equalsIgnoreCase(ERROR_CODE.REG006.toString())) {
+                } else if (e.getCode().equalsIgnoreCase(ERROR_CODE.REG006.toString())) {
 
-                    if(signUpBinding.txtUserId.isErrorEnabled() && signUpBinding.txtUserId.getError().toString().equalsIgnoreCase(getString(R.string.user_id_already))){
+                    if (signUpBinding.txtUserId.isErrorEnabled() && signUpBinding.txtUserId.getError().toString().equalsIgnoreCase(getString(R.string.user_id_already))) {
                         signUpBinding.txtUserId.setErrorEnabled(true);
                         signUpBinding.txtUserId.setError(getString(R.string.user_id_already));
-                    }else {
+                    } else {
                         signUpBinding.txtEmailId.setErrorEnabled(true);
                         signUpBinding.txtEmailId.setError(e.getMessage());
                     }
 
-                }else{
+                } else {
                     errorMsg.append(e.getMessage()).append("\n");
                     signUpBinding.txtError.setText(errorMsg);
                     signUpBinding.txtError.setVisibility(View.VISIBLE);
                 }
             }
-        }else{
+        } else {
             errorMsg.append(getString(R.string.server_error));
             signUpBinding.txtError.setText(errorMsg);
             signUpBinding.txtError.setVisibility(View.VISIBLE);

@@ -29,60 +29,61 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUpViewModel extends AndroidViewModel{
+public class SignUpViewModel extends AndroidViewModel {
 
-   RegUserMst userMst;
-   OnRegistrationEvent onRegistrationEvent;
-   Application application;
+    RegUserMst userMst;
+    OnRegistrationEvent onRegistrationEvent;
+    Application application;
 
     public SignUpViewModel(@NonNull Application application) {
         super(application);
-        this.application=application;
+        this.application = application;
     }
 
-    public void registerUser(View view){
+
+    public void registerUser(View view) {
 
         onRegistrationEvent.onRegistrationStart();
-        HashMap<String,String> mQueryMap=new HashMap<>();
+        HashMap<String, String> mQueryMap = new HashMap<>();
 
 
-        ArrayList<Error> errors=isValidData(userMst);
+        ArrayList<Error> errors = isValidData(userMst);
 
-        if(userMst!=null && errors.isEmpty()){
+        if (userMst != null && errors.isEmpty()) {
 
             mQueryMap.put("user_id", userMst.getUserId());
             mQueryMap.put("user_name", userMst.getUserName());
             mQueryMap.put("email", userMst.getEmailId());
             mQueryMap.put("password", userMst.getPassword());
 
-            UserRegistrationService service= UserRegistrationServiceImpl.getService();
-            final Call<RegistratoinResponse> responseCall=service.registerUser(mQueryMap);
+            UserRegistrationService service = UserRegistrationServiceImpl.getService();
+            final Call<RegistratoinResponse> responseCall = service.registerUser(mQueryMap);
             responseCall.enqueue(new Callback<RegistratoinResponse>() {
                 @Override
                 public void onResponse(Call<RegistratoinResponse> call, Response<RegistratoinResponse> response) {
-                    RegistratoinResponse mResponse=response.body();
-                    Log.d(Constants.TAG, "onResponse: "+new Gson().toJson(response.body()));
+                    RegistratoinResponse mResponse = response.body();
+                    Log.d(Constants.TAG, "onResponse: " + new Gson().toJson(response.body()));
 
-                    if(mResponse.isStatus()){
+                    if (mResponse.isStatus()) {
                         onRegistrationEvent.onRegistrationSuccess(mResponse);
-                    }else{
+                    } else {
                         onRegistrationEvent.onRegistrationFail(mResponse);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<RegistratoinResponse> call, Throwable t) {
-                    RegistratoinResponse mResponse=new RegistratoinResponse();
+                    RegistratoinResponse mResponse = new RegistratoinResponse();
                     mResponse.setStatus(false);
-                    Error mError=new Error("REG009",t.getMessage(),"REG");
+                    Error mError = new Error("REG009", t.getMessage(), "REG");
                     errors.add(mError);
                     mResponse.setErrors(errors);
                     onRegistrationEvent.onRegistrationFail(mResponse);
                 }
             });
 
-        }else{
-            RegistratoinResponse mResponse=new RegistratoinResponse();
+        } else {
+            RegistratoinResponse mResponse = new RegistratoinResponse();
             mResponse.setStatus(false);
             mResponse.setErrors(errors);
             onRegistrationEvent.onRegistrationFail(mResponse);
@@ -91,37 +92,37 @@ public class SignUpViewModel extends AndroidViewModel{
     }
 
     private ArrayList<Error> isValidData(RegUserMst userMst) {
-        ArrayList<Error> errors=new ArrayList<>();
+        ArrayList<Error> errors = new ArrayList<>();
 
-        if(null ==userMst.getUserId() || TextUtils.isEmpty(userMst.getUserId())){
-            errors.add(new Error(SignUp.ERROR_CODE.REG001.toString(),application.getString(R.string.user_id_cannot_be_empty),"REG"));
-        }else if(null!=userMst.getUserId() && (userMst.getUserId().length()<6 || userMst.getUserId().length()>30)){
-            errors.add(new Error(SignUp.ERROR_CODE.REG001.toString(),application.getString(R.string.user_id_length_msg),"REG"));
+        if (null == userMst.getUserId() || TextUtils.isEmpty(userMst.getUserId())) {
+            errors.add(new Error(SignUp.ERROR_CODE.REG001.toString(), application.getString(R.string.user_id_cannot_be_empty), "REG"));
+        } else if (null != userMst.getUserId() && (userMst.getUserId().length() < 6 || userMst.getUserId().length() > 30)) {
+            errors.add(new Error(SignUp.ERROR_CODE.REG001.toString(), application.getString(R.string.user_id_length_msg), "REG"));
         }
 
 
-        if(null ==userMst.getUserName() || TextUtils.isEmpty(userMst.getUserName())){
-            errors.add(new Error(SignUp.ERROR_CODE.REG002.toString(),application.getString(R.string.enter_valid_user_name),"REG"));
+        if (null == userMst.getUserName() || TextUtils.isEmpty(userMst.getUserName())) {
+            errors.add(new Error(SignUp.ERROR_CODE.REG002.toString(), application.getString(R.string.enter_valid_user_name), "REG"));
         }
 
-        if(null == userMst.getEmailId() || TextUtils.isEmpty(userMst.getEmailId()) && !Patterns.EMAIL_ADDRESS.matcher(userMst.getEmailId()).matches()){
-            errors.add(new Error(SignUp.ERROR_CODE.REG003.toString(),application.getString(R.string.enter_email_msg),"REG"));
+        if (null == userMst.getEmailId() || TextUtils.isEmpty(userMst.getEmailId()) && !Patterns.EMAIL_ADDRESS.matcher(userMst.getEmailId()).matches()) {
+            errors.add(new Error(SignUp.ERROR_CODE.REG003.toString(), application.getString(R.string.enter_email_msg), "REG"));
         }
 
         //password validation
-        if(null ==userMst.getPassword() || TextUtils.isEmpty(userMst.getPassword()) ){
-            errors.add(new Error(SignUp.ERROR_CODE.REG004.toString(),application.getString(R.string.password_can_be),"REG"));
+        if (null == userMst.getPassword() || TextUtils.isEmpty(userMst.getPassword())) {
+            errors.add(new Error(SignUp.ERROR_CODE.REG004.toString(), application.getString(R.string.password_can_be), "REG"));
 
         }
 
-        if(null != userMst.getPassword() && (userMst.getPassword().length()>6 || userMst.getPassword().length()<20)){
+        if (null != userMst.getPassword() && (userMst.getPassword().length() > 6 || userMst.getPassword().length() < 20)) {
 
-            if(null != userMst.getConfPassword() && !TextUtils.isEmpty(userMst.getConfPassword()) && !userMst.getPassword().equals(userMst.getConfPassword())) {
+            if (null != userMst.getConfPassword() && !TextUtils.isEmpty(userMst.getConfPassword()) && !userMst.getPassword().equals(userMst.getConfPassword())) {
                 errors.add(new Error(SignUp.ERROR_CODE.REG005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
             }
 
-        }else{
-            errors.add(new Error(SignUp.ERROR_CODE.REG004.toString(),application.getString(R.string.password_length_msg),"REG"));
+        } else {
+            errors.add(new Error(SignUp.ERROR_CODE.REG004.toString(), application.getString(R.string.password_length_msg), "REG"));
         }
 
         return errors;
