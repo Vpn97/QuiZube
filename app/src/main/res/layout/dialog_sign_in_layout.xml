@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="model"
+            type="com.apkzube.quizube.viewmodel.LoginViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/font"
+            android:text="@string/welcome_msg"
+            android:textColor="@color/colorAccent"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtUserId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/LoginTextInputLayoutStyle"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:counterMaxLength="6">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sign_up_field_higth"
+                    android:fontFamily="@font/popin"
+                    android:hint="@string/user_id"
+                    android:inputType="textPersonName"
+                    android:maxLines="1"
+                    android:text="@={model.userIdEmail}"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                style="@style/LoginTextInputLayoutStyle"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:passwordToggleEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sign_up_field_higth"
+                    android:fontFamily="@font/popin"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:text="@={model.password}"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <Button
+                android:id="@+id/btnSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sign_button_hight"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorAccent"
+                android:fontFamily="@font/popin"
+                android:text="@string/sign_in"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/txtSignUp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/popin"
+                android:padding="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/create_account"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/blue_gray"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:tint="@color/colorAccent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+</layout>

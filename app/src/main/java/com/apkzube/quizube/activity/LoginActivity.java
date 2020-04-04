@@ -1,20 +1,27 @@
 package com.apkzube.quizube.activity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivityLoginBinding;
+import com.apkzube.quizube.databinding.DialogSignInLayoutBinding;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.DataStorage;
+import com.apkzube.quizube.viewmodel.LoginViewModel;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -58,6 +65,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         loginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        LoginViewModel model= ViewModelProviders.of(this).get(LoginViewModel.class);
+
         allocation();
         setEvent();
     }
@@ -75,7 +84,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setEvent() {
         loginBinding.setClickListener(listener);
-
         mFacbookLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -109,8 +117,6 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Facebook Login Error", Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
 
 
@@ -156,10 +162,28 @@ public class LoginActivity extends AppCompatActivity {
 
         public void signIn(View view) {
 
+            Dialog dialog=new Dialog(context,android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
+            DialogSignInLayoutBinding mBinding=DialogSignInLayoutBinding.inflate(LayoutInflater.from(new ContextThemeWrapper(context,R.style.DialogTheme)));
+            dialog.setContentView(mBinding.getRoot());
+
+
+            LoginViewModel viewModel=ViewModelProviders.of(LoginActivity.this).get(LoginViewModel.class);
+            mBinding.setModel(viewModel);
+
+            mBinding.btnClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+
+
         }
 
         public void signUp(View view) {
-            startActivityForResult(new Intent(context,SignUp.class),Constants.SIGN_UP);
+            startActivityForResult(new Intent(context, SignUpActivity.class),Constants.SIGN_UP);
         }
     }
 

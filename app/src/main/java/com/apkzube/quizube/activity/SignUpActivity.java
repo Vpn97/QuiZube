@@ -2,14 +2,11 @@ package com.apkzube.quizube.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -18,7 +15,6 @@ import android.widget.Toast;
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivitySignUpBinding;
 import com.apkzube.quizube.events.OnRegistrationEvent;
-import com.apkzube.quizube.model.registration.RegUserMst;
 import com.apkzube.quizube.response.registration.Count;
 import com.apkzube.quizube.response.registration.RegistratoinResponse;
 import com.apkzube.quizube.service.UserRegistrationService;
@@ -27,13 +23,11 @@ import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.Error;
 import com.apkzube.quizube.viewmodel.SignUpViewModel;
 
-import java.util.regex.Pattern;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
+public class SignUpActivity extends AppCompatActivity implements OnRegistrationEvent {
 
     private ActivitySignUpBinding signUpBinding;
     private SignUpViewModel model;
@@ -139,7 +133,7 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
             }
         });
 
-        model.getConfimPassword().observe(this, new Observer<String>() {
+        model.getConfirmPassword().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String password) {
                 if (!password.equals(signUpBinding.txtPassword.getEditText().getText().toString())) {

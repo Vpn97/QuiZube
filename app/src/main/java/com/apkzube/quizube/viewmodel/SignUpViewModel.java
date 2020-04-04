@@ -11,7 +11,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apkzube.quizube.R;
-import com.apkzube.quizube.activity.SignUp;
+import com.apkzube.quizube.activity.SignUpActivity;
 import com.apkzube.quizube.events.OnRegistrationEvent;
 import com.apkzube.quizube.model.registration.RegUserMst;
 import com.apkzube.quizube.response.registration.RegistratoinResponse;
@@ -30,11 +30,11 @@ import retrofit2.Response;
 
 public class SignUpViewModel extends AndroidViewModel {
 
-    MutableLiveData<String> userId=new MutableLiveData<>();
-    MutableLiveData<String>  userName=new MutableLiveData<>();
-    MutableLiveData <String> email=new MutableLiveData<>();
-    MutableLiveData <String> password=new MutableLiveData<>();
-    MutableLiveData <String> confimPassword=new MutableLiveData<>();
+    private MutableLiveData<String> userId=new MutableLiveData<>();
+    private MutableLiveData<String>  userName=new MutableLiveData<>();
+    private MutableLiveData <String> email=new MutableLiveData<>();
+    private  MutableLiveData <String> password=new MutableLiveData<>();
+    private  MutableLiveData <String> confirmPassword =new MutableLiveData<>();
 
 
 
@@ -54,7 +54,7 @@ public class SignUpViewModel extends AndroidViewModel {
         HashMap<String, String> mQueryMap = new HashMap<>();
 
 
-        RegUserMst userMst=new RegUserMst(userId.getValue(),userName.getValue(),password.getValue(),confimPassword.getValue(),email.getValue());
+        RegUserMst userMst=new RegUserMst(userId.getValue(),userName.getValue(),password.getValue(), confirmPassword.getValue(),email.getValue());
         ArrayList<Error> errors = isValidData(userMst);
 
         if (userMst != null && errors.isEmpty()) {
@@ -103,34 +103,34 @@ public class SignUpViewModel extends AndroidViewModel {
         ArrayList<Error> errors = new ArrayList<>();
 
         if (null == userMst.getUserId() || TextUtils.isEmpty(userMst.getUserId())) {
-            errors.add(new Error(SignUp.ERROR_CODE.REG001.toString(), application.getString(R.string.user_id_cannot_be_empty), "REG"));
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG001.toString(), application.getString(R.string.user_id_cannot_be_empty), "REG"));
         } else if (null != userMst.getUserId() && (userMst.getUserId().length() < 6 || userMst.getUserId().length() > 30)) {
-            errors.add(new Error(SignUp.ERROR_CODE.REG001.toString(), application.getString(R.string.user_id_length_msg), "REG"));
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG001.toString(), application.getString(R.string.user_id_length_msg), "REG"));
         }
 
 
         if (null == userMst.getUserName() || TextUtils.isEmpty(userMst.getUserName())) {
-            errors.add(new Error(SignUp.ERROR_CODE.REG002.toString(), application.getString(R.string.enter_valid_user_name), "REG"));
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG002.toString(), application.getString(R.string.enter_valid_user_name), "REG"));
         }
 
         if (null == userMst.getEmailId() || TextUtils.isEmpty(userMst.getEmailId()) && !Patterns.EMAIL_ADDRESS.matcher(userMst.getEmailId()).matches()) {
-            errors.add(new Error(SignUp.ERROR_CODE.REG003.toString(), application.getString(R.string.enter_email_msg), "REG"));
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG003.toString(), application.getString(R.string.enter_email_msg), "REG"));
         }
 
         //password validation
         if (null == userMst.getPassword() || TextUtils.isEmpty(userMst.getPassword())) {
-            errors.add(new Error(SignUp.ERROR_CODE.REG004.toString(), application.getString(R.string.password_can_be), "REG"));
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG004.toString(), application.getString(R.string.password_can_be), "REG"));
 
         }
 
         if (null != userMst.getPassword() && (userMst.getPassword().length() > 6 || userMst.getPassword().length() < 20)) {
 
             if (null != userMst.getConfPassword() && !TextUtils.isEmpty(userMst.getConfPassword()) && !userMst.getPassword().equals(userMst.getConfPassword())) {
-                errors.add(new Error(SignUp.ERROR_CODE.REG005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+                errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
             }
 
         } else {
-            errors.add(new Error(SignUp.ERROR_CODE.REG004.toString(), application.getString(R.string.password_length_msg), "REG"));
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG004.toString(), application.getString(R.string.password_length_msg), "REG"));
         }
 
         return errors;
@@ -169,12 +169,12 @@ public class SignUpViewModel extends AndroidViewModel {
         this.password = password;
     }
 
-    public MutableLiveData<String> getConfimPassword() {
-        return confimPassword;
+    public MutableLiveData<String> getConfirmPassword() {
+        return confirmPassword;
     }
 
-    public void setConfimPassword(MutableLiveData<String> confimPassword) {
-        this.confimPassword = confimPassword;
+    public void setConfirmPassword(MutableLiveData<String> confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
     public OnRegistrationEvent getOnRegistrationEvent() {

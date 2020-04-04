@@ -26,6 +26,8 @@
     <string name="password_can_be">enter valid password</string>
     <string name="password_length_msg">password length should be between 6 and 20</string>
     <string name="user_id_length_msg">user id length should be between 6 and 30 char</string>
+    <string name="welcome_msg">Welcome to QuiZube</string>
+    <string name="create_account">create acoount.</string>
 
 
 </resources>
