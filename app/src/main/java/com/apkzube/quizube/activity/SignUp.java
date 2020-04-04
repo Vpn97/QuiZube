@@ -49,7 +49,6 @@ public class SignUp extends AppCompatActivity implements OnRegistrationEvent {
     private void allocation() {
         signUpBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up);
         model = ViewModelProviders.of(this).get(SignUpViewModel.class);
-        model.setUserMst(new RegUserMst());
         model.setOnRegistrationEvent(this);
         signUpBinding.setModel(model);
 

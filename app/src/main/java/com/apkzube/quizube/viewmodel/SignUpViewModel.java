@@ -31,7 +31,15 @@ import retrofit2.Response;
 
 public class SignUpViewModel extends AndroidViewModel {
 
-    RegUserMst userMst;
+    MutableLiveData<String> userId=new MutableLiveData<>();
+    MutableLiveData<String>  userName=new MutableLiveData<>();
+    MutableLiveData <String> email=new MutableLiveData<>();
+    MutableLiveData <String> password=new MutableLiveData<>();
+    MutableLiveData <String> confimPassword=new MutableLiveData<>();
+
+
+
+
     OnRegistrationEvent onRegistrationEvent;
     Application application;
 
@@ -47,6 +55,7 @@ public class SignUpViewModel extends AndroidViewModel {
         HashMap<String, String> mQueryMap = new HashMap<>();
 
 
+        RegUserMst userMst=new RegUserMst(userId.getValue(),userName.getValue(),password.getValue(),confimPassword.getValue(),email.getValue());
         ArrayList<Error> errors = isValidData(userMst);
 
         if (userMst != null && errors.isEmpty()) {
@@ -129,12 +138,44 @@ public class SignUpViewModel extends AndroidViewModel {
     }
 
 
-    public RegUserMst getUserMst() {
-        return userMst;
+    public MutableLiveData<String> getUserId() {
+        return userId;
     }
 
-    public void setUserMst(RegUserMst userMst) {
-        this.userMst = userMst;
+    public void setUserId(MutableLiveData<String> userId) {
+        this.userId = userId;
+    }
+
+    public MutableLiveData<String> getUserName() {
+        return userName;
+    }
+
+    public void setUserName(MutableLiveData<String> userName) {
+        this.userName = userName;
+    }
+
+    public MutableLiveData<String> getEmail() {
+        return email;
+    }
+
+    public void setEmail(MutableLiveData<String> email) {
+        this.email = email;
+    }
+
+    public MutableLiveData<String> getPassword() {
+        return password;
+    }
+
+    public void setPassword(MutableLiveData<String> password) {
+        this.password = password;
+    }
+
+    public MutableLiveData<String> getConfimPassword() {
+        return confimPassword;
+    }
+
+    public void setConfimPassword(MutableLiveData<String> confimPassword) {
+        this.confimPassword = confimPassword;
     }
 
     public OnRegistrationEvent getOnRegistrationEvent() {
