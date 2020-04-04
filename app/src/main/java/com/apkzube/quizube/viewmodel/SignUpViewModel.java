@@ -8,6 +8,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apkzube.quizube.R;
@@ -103,7 +104,7 @@ public class SignUpViewModel extends AndroidViewModel{
             errors.add(new Error(SignUp.ERROR_CODE.REG002.toString(),application.getString(R.string.enter_valid_user_name),"REG"));
         }
 
-        if(null ==userMst.getEmailId() || TextUtils.isEmpty(userMst.getEmailId()) && !Patterns.EMAIL_ADDRESS.matcher(userMst.getEmailId()).matches()){
+        if(null == userMst.getEmailId() || TextUtils.isEmpty(userMst.getEmailId()) && !Patterns.EMAIL_ADDRESS.matcher(userMst.getEmailId()).matches()){
             errors.add(new Error(SignUp.ERROR_CODE.REG003.toString(),application.getString(R.string.enter_email_msg),"REG"));
         }
 
