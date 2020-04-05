@@ -28,6 +28,9 @@
     <string name="user_id_length_msg">user id length should be between 6 and 30 char</string>
     <string name="welcome_msg">Welcome to QuiZube</string>
     <string name="create_account">create acoount.</string>
+    <string name="insert_user_id_password">enter user id or email</string>
+    <string name="enter_password">enter password</string>
+    <string name="user_id_or_email">USER ID OR EMAIL</string>
 
 
 </resources>

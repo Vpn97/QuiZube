@@ -1,4 +1,4 @@
-package com.apkzube.quizube.events;
+package com.apkzube.quizube.events.registration;
 
 import com.apkzube.quizube.response.registration.RegistratoinResponse;
 

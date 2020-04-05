@@ -59,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/sign_up_field_higth"
                     android:fontFamily="@font/popin"
-                    android:hint="@string/user_id"
+                    android:hint="@string/user_id_or_email"
                     android:inputType="textPersonName"
                     android:maxLines="1"
                     android:text="@={model.userIdEmail}"
@@ -90,13 +90,27 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
+            <TextView
+                android:id="@+id/txtError"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sign_button_hight"
+                android:fontFamily="@font/popin"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center|start"
+                android:textColor="@color/error_text"
+                />
+
             <Button
-                android:id="@+id/btnSignUp"
+                android:id="@+id/btnDialogSignIn"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sign_button_hight"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@color/colorAccent"
                 android:fontFamily="@font/popin"
                 android:text="@string/sign_in"
@@ -106,13 +120,14 @@
             <TextView
                 android:id="@+id/txtSignUp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/sign_button_hight"
                 android:fontFamily="@font/popin"
                 android:padding="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/create_account"
-                android:textAlignment="viewEnd"
+                android:gravity="center|end"
                 android:textColor="@color/blue_gray"
                 android:textStyle="bold" />
 
@@ -127,7 +142,7 @@
             android:tint="@color/colorAccent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+            app:srcCompat="@drawable/ic_close" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     </RelativeLayout>
 </layout>

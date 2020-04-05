@@ -12,11 +12,11 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.activity.SignUpActivity;
-import com.apkzube.quizube.events.OnRegistrationEvent;
+import com.apkzube.quizube.events.registration.OnRegistrationEvent;
 import com.apkzube.quizube.model.registration.RegUserMst;
 import com.apkzube.quizube.response.registration.RegistratoinResponse;
-import com.apkzube.quizube.service.UserRegistrationService;
-import com.apkzube.quizube.service.impl.UserRegistrationServiceImpl;
+import com.apkzube.quizube.service.registration.RegistrationService;
+import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.Error;
 import com.google.gson.Gson;
@@ -64,7 +64,7 @@ public class SignUpViewModel extends AndroidViewModel {
             mQueryMap.put("email", userMst.getEmailId());
             mQueryMap.put("password", userMst.getPassword());
 
-            UserRegistrationService service = UserRegistrationServiceImpl.getService();
+            RegistrationService service = RegistrationServiceImpl.getService();
             final Call<RegistratoinResponse> responseCall = service.registerUser(mQueryMap);
             responseCall.enqueue(new Callback<RegistratoinResponse>() {
                 @Override

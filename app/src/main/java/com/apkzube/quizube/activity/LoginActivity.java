@@ -1,7 +1,6 @@
 package com.apkzube.quizube.activity;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -10,6 +9,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -19,8 +19,11 @@ import android.widget.Toast;
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivityLoginBinding;
 import com.apkzube.quizube.databinding.DialogSignInLayoutBinding;
+import com.apkzube.quizube.events.registration.OnLoginEvent;
+import com.apkzube.quizube.response.registration.LoginResponse;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.DataStorage;
+import com.apkzube.quizube.util.Error;
 import com.apkzube.quizube.viewmodel.LoginViewModel;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -41,12 +44,19 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
 
     ActivityLoginBinding loginBinding;
     DataStorage storage;
+    Dialog dialog;
+    LoginViewModel loginViewModel;
+
+    //binding
+    DialogSignInLayoutBinding mBinding;
+    OnLoginEvent loginEvent;
 
 
     //google sign in
@@ -65,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         loginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
-        LoginViewModel model= ViewModelProviders.of(this).get(LoginViewModel.class);
+        //LoginViewModel model= ViewModelProviders.of(this).get(LoginViewModel.class);
 
         allocation();
         setEvent();
@@ -73,14 +83,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private void allocation() {
         storage = new DataStorage(this, getString(R.string.user_data));
+        loginEvent = this;
         listener = new LoginActivityClickListener(this);
         mAuth = FirebaseAuth.getInstance();
         mFacbookLoginButton = loginBinding.btnFbLogin;
         mFacbookLoginButton.setLoginBehavior(LoginBehavior.DIALOG_ONLY);
         mCallbackManager = CallbackManager.Factory.create();
         mFacbookLoginButton.setPermissions(Constants.FB_PERIMISSON_LIST);
+        //set dialog for login
+        setLoginDialog();
     }
-
 
     private void setEvent() {
         loginBinding.setClickListener(listener);
@@ -97,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     Toast.makeText(LoginActivity.this, "Login By FaceBook " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                                    storage.write(Constants.LOGIN_TYPE,Constants.LOGIN_FACEBOOK);
+                                    storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_FACEBOOK);
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(LoginActivity.this, "Authentication failed Facebook.", Toast.LENGTH_SHORT).show();
@@ -119,6 +131,32 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void setLoginDialog() {
+
+        dialog = new Dialog(this, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
+        mBinding = DialogSignInLayoutBinding.inflate(LayoutInflater.from(new ContextThemeWrapper(this, R.style.DialogTheme)));
+        dialog.setContentView(mBinding.getRoot());
+
+
+        loginViewModel = ViewModelProviders.of(LoginActivity.this).get(LoginViewModel.class);
+        loginViewModel.setLoginEvent(loginEvent);
+        mBinding.setModel(loginViewModel);
+
+        mBinding.btnDialogSignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginViewModel.signIn(view);
+            }
+        });
+
+        mBinding.btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+    }
+
 
     @Override
     protected void onStart() {
@@ -131,13 +169,59 @@ public class LoginActivity extends AppCompatActivity {
                 break;
             case 2:
                 FirebaseUser user = mAuth.getCurrentUser();
-                Toast.makeText(this, "Login By Facebook : "+user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Login By Facebook : " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                 break;
 
             default:
                 Toast.makeText(this, "NO User Login", Toast.LENGTH_SHORT).show();
 
         }
+    }
+
+    @Override
+    public void onLoginSuccess(LoginResponse response) {
+        Log.d(Constants.TAG, "Login Success: " + new Gson().toJson(response));
+        if (null != response && null != response.getUser() && response.isStatus()) {
+            Toast.makeText(this, response.getUser().getUserName(), Toast.LENGTH_SHORT).show();
+        } else {
+            mBinding.txtError.setVisibility(View.VISIBLE);
+            mBinding.txtError.setText(getString(R.string.server_error));
+        }
+    }
+
+    @Override
+    public void onLoginFail(LoginResponse response) {
+        Log.d(Constants.TAG, "onLoginFail: " + new Gson().toJson(response));
+        if (null != response && !response.isStatus()) {
+            if (null != response.getErrors() && !response.getErrors().isEmpty()) {
+                StringBuffer errorBuffer = new StringBuffer();
+                for (Error error : response.getErrors()) {
+
+                    if (error.getCode().equalsIgnoreCase(LOGIN_EROR_CODE.REG001.toString())) {
+                        mBinding.txtUserId.setErrorEnabled(true);
+                        mBinding.txtUserId.setError(error.getMessage());
+                    } else if (error.getCode().equalsIgnoreCase(LOGIN_EROR_CODE.REG002.toString())) {
+                        mBinding.txtPassword.setErrorEnabled(true);
+                        mBinding.txtPassword.setError(error.getMessage());
+                    } else {
+                        errorBuffer.append(error.getMessage()).append("\n");
+                    }
+                }
+                if (!TextUtils.isEmpty(errorBuffer)) {
+                    mBinding.txtError.setVisibility(View.VISIBLE);
+                    mBinding.txtError.setText(errorBuffer);
+                }
+            } else {
+                mBinding.txtError.setVisibility(View.VISIBLE);
+                mBinding.txtError.setText(getString(R.string.server_error));
+            }
+        }
+    }
+
+    @Override
+    public void onLoginStart() {
+        mBinding.txtError.setVisibility(View.GONE);
+        mBinding.txtError.setText("");
     }
 
     public class LoginActivityClickListener {
@@ -161,29 +245,11 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         public void signIn(View view) {
-
-            Dialog dialog=new Dialog(context,android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
-            DialogSignInLayoutBinding mBinding=DialogSignInLayoutBinding.inflate(LayoutInflater.from(new ContextThemeWrapper(context,R.style.DialogTheme)));
-            dialog.setContentView(mBinding.getRoot());
-
-
-            LoginViewModel viewModel=ViewModelProviders.of(LoginActivity.this).get(LoginViewModel.class);
-            mBinding.setModel(viewModel);
-
-            mBinding.btnClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialog.dismiss();
-                }
-            });
-
             dialog.show();
-
-
         }
 
         public void signUp(View view) {
-            startActivityForResult(new Intent(context, SignUpActivity.class),Constants.SIGN_UP);
+            startActivityForResult(new Intent(context, SignUpActivity.class), Constants.SIGN_UP);
         }
     }
 
@@ -207,8 +273,27 @@ public class LoginActivity extends AppCompatActivity {
             //login by FaceBook
             storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_GOOGLE);
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
+
+        } else if (requestCode == Constants.SIGN_UP) {
+
+            if (null != data) {
+                String userID = data.getStringExtra("user_id");
+                if (null != userID && !TextUtils.isEmpty(userID)) {
+                    dialog.show();
+                    loginViewModel.getUserIdEmail().setValue(userID);
+                    mBinding.txtPassword.setFocusable(true);
+                    mBinding.txtPassword.requestFocus();
+                }
+            }
+
         }
     }
 
+
+    public static enum LOGIN_EROR_CODE {
+        REG001,//user id or email
+        REG002,// password
+        REG012// error
+    }
 
 }

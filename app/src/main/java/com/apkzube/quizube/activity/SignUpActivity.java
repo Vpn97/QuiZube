@@ -5,6 +5,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,11 +15,11 @@ import android.widget.Toast;
 
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivitySignUpBinding;
-import com.apkzube.quizube.events.OnRegistrationEvent;
+import com.apkzube.quizube.events.registration.OnRegistrationEvent;
 import com.apkzube.quizube.response.registration.Count;
 import com.apkzube.quizube.response.registration.RegistratoinResponse;
-import com.apkzube.quizube.service.UserRegistrationService;
-import com.apkzube.quizube.service.impl.UserRegistrationServiceImpl;
+import com.apkzube.quizube.service.registration.RegistrationService;
+import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.Error;
 import com.apkzube.quizube.viewmodel.SignUpViewModel;
@@ -56,7 +57,7 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
 
                 if (userIdNew != null && userIdNew.matches(Constants.USER_ID_REGEX) && userIdNew.length() >= 6 && userIdNew.length() < 30) {
 
-                    UserRegistrationService registrationService = UserRegistrationServiceImpl.getService();
+                    RegistrationService registrationService = RegistrationServiceImpl.getService();
                     final Call<Count> countCall = registrationService.getIsValidUser(userIdNew);
                     countCall.enqueue(new Callback<Count>() {
                         @Override
@@ -150,8 +151,11 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
 
     @Override
     public void onRegistrationSuccess(RegistratoinResponse response) {
-        Toast.makeText(this, "Registration Success", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Registration Success", Toast.LENGTH_SHORT).show();
         if (response.isStatus()) {
+            Intent intent=new Intent();
+            intent.putExtra("user_id",model.getUserId().getValue());
+            setResult(RESULT_OK,intent);
             finish();
         } else {
             StringBuilder errorMsg = new StringBuilder();
@@ -174,7 +178,7 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
 
     @Override
     public void onRegistrationFail(RegistratoinResponse response) {
-        Toast.makeText(this, "Registration Fail", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Registration Fail", Toast.LENGTH_SHORT).show();
         StringBuilder errorMsg = new StringBuilder();
         if (null != response.getErrors() && response.getErrors().size() > 0) {
             for (Error e : response.getErrors()) {

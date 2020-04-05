@@ -8,6 +8,7 @@ public class  CommonRestURL {
     //registration
     public static final String USER_ID_VALID_URL="registration/ValidateUserId.php";
     public static final String REGISTER_USER_URL = "registration/RegUserMst.php";
+    public static final String LOGIN_USER_URL = "registration/LoginRequest.php";
 
 
 }

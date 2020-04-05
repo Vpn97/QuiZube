@@ -7,6 +7,8 @@ import java.util.List;
 public class Constants {
 
     public static final String TAG = "ApkZube";
+    public static final String YES= "Y";
+    public static final String NO = "N";
     public static final String USER_ID_REGEX = "^[A-Za-z][\\w.-]+[a-zA-Z0-9]$";
 
     public static String LOGIN_TYPE="login_type";
