@@ -2,4 +2,5 @@
 <resources>
     <dimen name="sign_button_hight">52dp</dimen>
     <dimen name="sign_up_field_higth">52dp</dimen>
+    <dimen name="text_heigth">32dp</dimen>
 </resources>

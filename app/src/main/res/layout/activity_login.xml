@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.apkzube.quizube.activity.LoginActivity.LoginActivityClickListener" />
+            type="com.apkzube.quizube.activity.registration.LoginActivity.LoginActivityClickListener" />
 
 
     </data>
@@ -15,7 +15,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activity.LoginActivity">
+        tools:context=".activity.registration.LoginActivity">
 
         <FrameLayout
             android:id="@+id/frameLayout"
@@ -156,6 +156,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:clipToPadding="false"
+                android:clipChildren="false"
                 android:maxWidth="200dp"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
@@ -171,6 +173,7 @@
                     android:layout_height="@dimen/sign_button_hight"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
+                    android:background="@drawable/round_shape"
                     android:fontFamily="@font/popin"
                     android:text="@string/sign_up"
                     android:textAllCaps="false"
@@ -183,6 +186,7 @@
                     android:onClick="@{clickListener::signIn}"
                     android:layout_height="@dimen/sign_button_hight"
                     android:layout_margin="8dp"
+                    android:background="@drawable/round_shape"
                     android:layout_weight="1"
                     android:fontFamily="@font/popin"
                     android:text="@string/sign_in"
@@ -196,6 +200,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/popin"
                 android:gravity="center"
@@ -203,7 +209,9 @@
                 android:textAlignment="center"
                 android:textColor="@color/apkzube_title"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

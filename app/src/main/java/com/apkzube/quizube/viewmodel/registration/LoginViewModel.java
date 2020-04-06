@@ -1,4 +1,4 @@
-package com.apkzube.quizube.viewmodel;
+package com.apkzube.quizube.viewmodel.registration;
 
 import android.app.Application;
 import android.text.TextUtils;
@@ -11,7 +11,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apkzube.quizube.R;
-import com.apkzube.quizube.activity.LoginActivity;
+import com.apkzube.quizube.activity.registration.LoginActivity;
 import com.apkzube.quizube.events.registration.OnLoginEvent;
 import com.apkzube.quizube.response.registration.LoginResponse;
 import com.apkzube.quizube.service.registration.RegistrationService;

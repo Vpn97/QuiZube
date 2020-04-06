@@ -1,4 +1,4 @@
-package com.apkzube.quizube.activity;
+package com.apkzube.quizube.activity.registration;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Toast;
 
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivitySignUpBinding;
@@ -22,7 +21,7 @@ import com.apkzube.quizube.service.registration.RegistrationService;
 import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.Error;
-import com.apkzube.quizube.viewmodel.SignUpViewModel;
+import com.apkzube.quizube.viewmodel.registration.SignUpViewModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +49,16 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
     }
 
     private void setEvent() {
+
+
+        signUpBinding.txtAlreadyAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent();
+                setResult(RESULT_OK,intent);
+                finish();
+            }
+        });
 
         model.getUserId().observe(this, new Observer<String>() {
             @Override

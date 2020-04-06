@@ -3,6 +3,7 @@ package com.apkzube.quizube.service.registration;
 import com.apkzube.quizube.response.registration.Count;
 import com.apkzube.quizube.response.registration.LoginResponse;
 import com.apkzube.quizube.response.registration.RegistratoinResponse;
+import com.apkzube.quizube.response.registration.SendOTPResponse;
 import com.apkzube.quizube.util.CommonRestURL;
 
 import java.util.HashMap;
@@ -22,5 +23,8 @@ public interface RegistrationService {
 
     @POST(CommonRestURL.LOGIN_USER_URL)
     Call<LoginResponse> loginRequest(@QueryMap HashMap<String,String> mQueryMap);
+
+    @POST(CommonRestURL.SEND_OTP_URL)
+    Call<SendOTPResponse> sendOTP(@QueryMap HashMap<String,String> mQueryMap);
 
 }

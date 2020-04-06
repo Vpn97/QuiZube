@@ -13,8 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         tools:ignore="AllowBackup">
-
-        <activity android:name=".activity.SignUpActivity"
+        <activity android:name=".activity.registration.ForgotPasswordActivity"
+            android:theme="@style/AppTheme.SignUp"/>
+        <activity
+            android:name=".activity.registration.SignUpActivity"
             android:theme="@style/AppTheme.SignUp" />
 
         <meta-data
@@ -25,7 +27,6 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
@@ -38,7 +39,8 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LoginActivity"
+        <activity
+            android:name=".activity.registration.LoginActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,4 +1,4 @@
-package com.apkzube.quizube.activity;
+package com.apkzube.quizube.activity.registration;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +24,7 @@ import com.apkzube.quizube.response.registration.LoginResponse;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.DataStorage;
 import com.apkzube.quizube.util.Error;
-import com.apkzube.quizube.viewmodel.LoginViewModel;
+import com.apkzube.quizube.viewmodel.registration.LoginViewModel;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -153,6 +153,22 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+            }
+        });
+
+        mBinding.txtSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loginBinding.btnSignUp.performClick();
+                dialog.dismiss();
+            }
+        });
+
+
+        mBinding.txtForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this,ForgotPasswordActivity.class));
             }
         });
     }

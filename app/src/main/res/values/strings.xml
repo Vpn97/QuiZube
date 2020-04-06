@@ -3,8 +3,8 @@
     <string name="sign_with_google">Sign-In with Google</string>
     <string name="sign_with_facebook">Sign-in with Facebook</string>
     <string name="loing_with">OR WITH EMAIL</string>
-    <string name="sign_up">Sign Up</string>
-    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Sign in</string>
     <string name="quizube">Q  u i Z u b e</string>
 
 
@@ -27,10 +27,20 @@
     <string name="password_length_msg">password length should be between 6 and 20</string>
     <string name="user_id_length_msg">user id length should be between 6 and 30 char</string>
     <string name="welcome_msg">Welcome to QuiZube</string>
-    <string name="create_account">create acoount.</string>
+    <string name="create_account">New to QuiZube ? Sign up</string>
     <string name="insert_user_id_password">enter user id or email</string>
     <string name="enter_password">enter password</string>
     <string name="user_id_or_email">USER ID OR EMAIL</string>
+    <string name="get_start_it">Get started</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="create_account_sign_up">Sign up to get started</string>
+    <string name="already_have_account">Already have an account? Sign in</string>
+    <string name="forgot_password_msg">Enter email address\nassociated with yout account</string>
+    <string name="send">Send</string>
+    <string name="forgot_password_msg_otp">We will send email you an\none time password to reset account password</string>
+    <string name="back_to_login">Back to login</string>
+    <string name="inser_email">enter email id</string>
+    <string name="re_try">RETRY</string>
 
 
 </resources>
