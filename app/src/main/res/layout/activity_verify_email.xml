@@ -4,23 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="model"
-            type="com.apkzube.quizube.viewmodel.registration.ForgotPasswordViewModel" />
+            type="com.apkzube.quizube.viewmodel.registration.VerifyEmailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        tools:context=".activity.registration.VerifyEmailActivity">
 
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_undraw_my_password_new"
+            android:padding="16dp"
+            android:src="@drawable/ic_undraw_email"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +42,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/popin"
-                android:text="@string/forgot_password"
+                android:text="@string/verify_email"
                 android:textColor="@color/colorAccent"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -62,7 +61,7 @@
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/popin"
                 android:gravity="center|end"
-                android:text="@string/forgot_password_msg_otp"
+                android:text="@string/verify_email_msg"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/blue_gray"
@@ -108,16 +107,16 @@
                 android:background="@drawable/round_shape"
                 android:fontFamily="@font/popin"
                 android:onClick="@{model::sendOTP}"
-                android:text="@string/send"
+                android:text="@string/confirm"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                app:layout_constraintBottom_toTopOf="@+id/txtBackToLogin"
+                app:layout_constraintBottom_toTopOf="@+id/txtResend"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
 
             <TextView
-                android:id="@+id/txtBackToLogin"
+                android:id="@+id/txtResend"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/text_heigth"
                 android:layout_marginStart="16dp"
@@ -125,7 +124,7 @@
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/popin"
                 android:gravity="center|end"
-                android:text="@string/back_to_login"
+                android:text="@string/resend_email"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/blue_gray"
@@ -144,6 +143,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

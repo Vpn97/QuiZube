@@ -41,6 +41,10 @@
     <string name="back_to_login">Back to login</string>
     <string name="inser_email">enter email id</string>
     <string name="re_try">RETRY</string>
+    <string name="confirm">Confirm</string>
+    <string name="verify_email">Verify your email</string>
+    <string name="verify_email_msg">Enter the verification code\njust send you on</string>
+    <string name="resend_email">if you didn\'t receive a code ? Resend</string>
 
 
 </resources>

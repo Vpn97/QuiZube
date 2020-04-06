@@ -29,5 +29,7 @@
     <color name="anim_back">#F1F2F5</color>
     <color name="apkzube_title">#43A047</color>
     <color name="error_text">#E53935</color>
+    <color name="disable_back_color">#000000</color>
+    <color name="back_grey">#f2f2f2</color>
 
 </resources>

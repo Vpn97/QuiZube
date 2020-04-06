@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.apkzube.quizube.R;
@@ -17,6 +18,7 @@ import com.apkzube.quizube.events.registration.OnSendOTPEvent;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.Error;
+import com.apkzube.quizube.util.ViewUtil;
 import com.apkzube.quizube.viewmodel.registration.ForgotPasswordViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -42,6 +44,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
         model.setSendOTPEvent(this);
         mBinding.setModel(model);
         snackbar=Snackbar.make(mBinding.getRoot(), "", Snackbar.LENGTH_LONG);
+        mBinding.progressBar.setVisibility(View.GONE);
     }
 
     private void setEvent() {
@@ -70,7 +73,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
         }
 
 
-        if(errorCode.equalsIgnoreCase(SEND_OTP_ERROR_CODE.OTP003.toString()) && errorCode.equalsIgnoreCase(SEND_OTP_ERROR_CODE.OTP005.toString()) ){
+        if(TextUtils.isEmpty(errorCode)|| errorCode.equalsIgnoreCase(SEND_OTP_ERROR_CODE.OTP003.toString()) || errorCode.equalsIgnoreCase(SEND_OTP_ERROR_CODE.OTP005.toString()) ){
             //responce fail
             snackbar.setAction(R.string.re_try,view -> {
                 mBinding.btnSendMail.performClick();
@@ -83,11 +86,14 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
 
     @Override
     public void onSendOTPSuccess(SendOTPResponse response) {
+        mBinding.progressBar.setVisibility(View.GONE);
+        ViewUtil.enableDisableView(mBinding.getRoot(),true);
 
         if(response.isStatus()){
-            Toast.makeText(this, response.getUid()+" : "+response.getOtp()+" : "+response.getEmail(), Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(this, response.getOtp(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, response.getUid()+" : "+response.getOtp()+" : "+response.getEmail(), Toast.LENGTH_SHORT).show();
+            Intent intent=new Intent(this,VerifyEmailActivity.class);
+            intent.putExtra("response",response);
+            startActivity(intent);
         }
 
     }
@@ -95,7 +101,10 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
     @Override
     public void onSendOTPFail(SendOTPResponse response) {
 
-        Log.d(Constants.TAG, "onSendOTPFail: "+new Gson().toJson(response));
+        mBinding.progressBar.setVisibility(View.GONE);
+        ViewUtil.enableDisableView(mBinding.getRoot(),true);
+      //  Log.d(Constants.TAG, "onSendOTPFail: "+new Gson().toJson(response));
+
         if(null!=response && !response.isStatus()){
             StringBuffer errorBuffer=new StringBuffer();
             if(null!=response.getErrors() && !response.getErrors().isEmpty()) {
@@ -119,16 +128,19 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
                     }
                 }
                 if(!TextUtils.isEmpty(errorBuffer)) {
-                    setSnackBar(errorBuffer.toString(),null);
+                    setSnackBar(errorBuffer.toString(),"");
                 }
             }
 
         }
+
     }
 
     @Override
     public void onSendOTPStart() {
         Log.d(Constants.TAG, "onSendOTPStart: ");
+        mBinding.progressBar.setVisibility(View.VISIBLE);
+        ViewUtil.enableDisableView(mBinding.getRoot(),false);
     }
 
 
