@@ -19,6 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:padding="16dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_undraw_email"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,8 +40,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 android:fontFamily="@font/popin"
                 android:text="@string/verify_email"
                 android:textColor="@color/colorAccent"
@@ -66,35 +68,106 @@
                 android:textAllCaps="false"
                 android:textColor="@color/blue_gray"
                 android:textSize="12sp"
-                app:layout_constraintBottom_toTopOf="@+id/txtEmail"
+                app:layout_constraintBottom_toTopOf="@+id/linLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txtEmail"
-                style="@style/LoginTextInputLayoutStyle"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/linLayout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toTopOf="@+id/btnSendMail"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sign_up_field_higth"
-                    android:focusable="true"
-                    android:focusedByDefault="true"
+                <EditText
+                    android:id="@+id/otp1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints="-"
                     android:fontFamily="@font/popin"
-                    android:hint="@string/email_id"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:text="@={model.email}"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:inputType="numberSigned"
+                    android:text="@={model.otp1}"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:ignore="LabelFor,UnusedAttribute" />
+
+                <EditText
+                    android:id="@+id/otp2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints="-"
+                    android:fontFamily="@font/popin"
+                    android:inputType="numberSigned"
+                    android:text="@={model.otp2}"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:ignore="LabelFor,UnusedAttribute" />
+
+                <EditText
+                    android:id="@+id/otp3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints="-"
+                    android:fontFamily="@font/popin"
+                    android:inputType="numberSigned"
+                    android:text="@={model.otp3}"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:ignore="LabelFor,UnusedAttribute" />
+
+                <EditText
+                    android:id="@+id/otp4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints="-"
+                    android:fontFamily="@font/popin"
+                    android:inputType="numberSigned"
+                    android:text="@={model.otp4}"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:ignore="LabelFor,UnusedAttribute" />
+
+                <EditText
+                    android:id="@+id/otp5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints="-"
+                    android:fontFamily="@font/popin"
+                    android:inputType="numberSigned"
+                    android:text="@={model.otp5}"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:ignore="LabelFor,UnusedAttribute" />
+
+                <EditText
+                    android:id="@+id/otp6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:autofillHints="-"
+                    android:fontFamily="@font/popin"
+                    android:inputType="numberSigned"
+                    android:text="@={model.otp6}"
+                    android:textAlignment="center"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    tools:ignore="LabelFor,UnusedAttribute" />
+            </LinearLayout>
 
 
             <Button
@@ -106,7 +179,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/round_shape"
                 android:fontFamily="@font/popin"
-                android:onClick="@{model::sendOTP}"
+                android:onClick="@{model::verifyOTP}"
                 android:text="@string/confirm"
                 android:textAllCaps="false"
                 android:textColor="@color/white"

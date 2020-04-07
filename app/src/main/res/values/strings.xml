@@ -45,6 +45,8 @@
     <string name="verify_email">Verify your email</string>
     <string name="verify_email_msg">Enter the verification code\njust send you on</string>
     <string name="resend_email">if you didn\'t receive a code ? Resend</string>
+    <string name="otp_verify_sucessfully">OTP Verified Successfully</string>
+    <string name="otp_does_not_match">OTP does not match</string>
 
 
 </resources>
