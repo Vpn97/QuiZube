@@ -5,7 +5,7 @@ import com.apkzube.quizube.response.registration.SendOTPResponse;
 public interface OnSendOTPEvent {
 
 
-    public void onSendOTPSuccess(SendOTPResponse responce);
-    public void onSendOTPFail(SendOTPResponse responce);
+    public void onOTPReceiveSuccess(SendOTPResponse responce);
+    public void onOTPReceiveFail(SendOTPResponse responce);
     public void onSendOTPStart();
 }

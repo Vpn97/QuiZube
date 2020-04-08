@@ -32,17 +32,21 @@ public class SendOTPResponse implements Parcelable {
     @Expose
     private ArrayList<Error> errors;
 
-    public SendOTPResponse(boolean status, String uid, String email, String otp, ArrayList<Error> errors) {
+    @SerializedName("is_expired")
+    @Expose
+    private boolean isExpired;
+
+    public SendOTPResponse(boolean status, String uid, String email, String otp, ArrayList<Error> errors, boolean isExpired) {
         this.status = status;
         this.uid = uid;
         this.email = email;
         this.otp = otp;
         this.errors = errors;
+        this.isExpired = isExpired;
     }
 
     public SendOTPResponse() {
     }
-
 
     protected SendOTPResponse(Parcel in) {
         status = in.readByte() != 0;
@@ -50,6 +54,7 @@ public class SendOTPResponse implements Parcelable {
         email = in.readString();
         otp = in.readString();
         errors = in.createTypedArrayList(Error.CREATOR);
+        isExpired = in.readByte() != 0;
     }
 
     @Override
@@ -59,6 +64,7 @@ public class SendOTPResponse implements Parcelable {
         dest.writeString(email);
         dest.writeString(otp);
         dest.writeTypedList(errors);
+        dest.writeByte((byte) (isExpired ? 1 : 0));
     }
 
     @Override
@@ -116,5 +122,13 @@ public class SendOTPResponse implements Parcelable {
 
     public void setErrors(ArrayList<Error> errors) {
         this.errors = errors;
+    }
+
+    public boolean isExpired() {
+        return isExpired;
+    }
+
+    public void setExpired(boolean expired) {
+        isExpired = expired;
     }
 }

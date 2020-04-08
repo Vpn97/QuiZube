@@ -1,15 +1,27 @@
 package com.apkzube.quizube.viewmodel.registration;
 
 import android.app.Application;
+import android.os.CountDownTimer;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.apkzube.quizube.R;
+import com.apkzube.quizube.activity.registration.ForgotPasswordActivity;
+import com.apkzube.quizube.events.registration.OnOTPVerifyEvent;
+import com.apkzube.quizube.events.registration.OnSendOTPEvent;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
+import com.apkzube.quizube.service.registration.RegistrationService;
+import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
+import com.apkzube.quizube.util.Error;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class VerifyEmailViewModel extends AndroidViewModel {
 
@@ -19,10 +31,14 @@ public class VerifyEmailViewModel extends AndroidViewModel {
     private MutableLiveData<String> otp4=new MutableLiveData<>();
     private MutableLiveData<String> otp5=new MutableLiveData<>();
     private MutableLiveData<String> otp6=new MutableLiveData<>();
+    private MutableLiveData<String> count=new MutableLiveData<>();
     private SendOTPResponse otpResponse;
 
     private Application application;
 
+    //events
+    private OnSendOTPEvent sendOTPEvent;
+    private OnOTPVerifyEvent onOTPVerifyEvent;
 
     public VerifyEmailViewModel(@NonNull Application application) {
         super(application);
@@ -31,13 +47,63 @@ public class VerifyEmailViewModel extends AndroidViewModel {
     }
 
     public void verifyOTP(View view){
+        onOTPVerifyEvent.onOTPVerifyStart();
+
         if(null!=otpResponse){
             String inputOTP=String.valueOf(otp1.getValue()+otp2.getValue()+otp3.getValue()+otp4.getValue()+otp5.getValue()+otp6.getValue());
-            if(otpResponse.getOtp().equalsIgnoreCase(inputOTP)){
-                Toast.makeText(application, application.getString(R.string.otp_verify_sucessfully), Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(application, application.getString(R.string.otp_does_not_match), Toast.LENGTH_SHORT).show();
+            if(otpResponse.isExpired()){
+                //otp expired
+                onOTPVerifyEvent.onOTPExpired(otpResponse);
+            }else {
+                if (otpResponse.getOtp().equalsIgnoreCase(inputOTP)) {
+                    onOTPVerifyEvent.onOTPVerifySuccess(otpResponse);
+                } else {
+                    onOTPVerifyEvent.onOTPNotMatch(otpResponse);
+                }
             }
+        }
+    }
+
+
+    public void sendOTP(View view){
+        //Log.d(Constants.TAG, "sendOTP: "+email.getValue());
+
+        sendOTPEvent.onSendOTPStart();
+        ArrayList<Error> errors=new ArrayList<>();
+        SendOTPResponse mSendOTPResponse;
+
+        if(errors.isEmpty()){
+            RegistrationService service= RegistrationServiceImpl.getService();
+            HashMap<String, String> mQueryMap = new HashMap<>();
+            mQueryMap.put("email", otpResponse.getEmail());
+
+            service.sendOTP(mQueryMap).enqueue(new Callback<SendOTPResponse>() {
+                @Override
+                public void onResponse(Call<SendOTPResponse> call, Response<SendOTPResponse> response) {
+                    if(null!=response.body() && response.body().isStatus()){
+                        sendOTPEvent.onOTPReceiveSuccess(response.body());
+                        otpResponse =response.body();
+                    }else{
+                        sendOTPEvent.onOTPReceiveFail(response.body());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<SendOTPResponse> call, Throwable t) {
+                    SendOTPResponse mResponse=new SendOTPResponse();
+                    mResponse.setStatus(false);
+                    Error mError = new Error(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP005.toString(), t.getMessage(), "REG");
+                    errors.add(mError);
+                    mResponse.setErrors(errors);
+                    sendOTPEvent.onOTPReceiveFail(mResponse);
+                }
+            });
+
+        }else{
+            mSendOTPResponse=new SendOTPResponse();
+            mSendOTPResponse.setStatus(false);
+            mSendOTPResponse.setErrors(errors);
+            sendOTPEvent.onOTPReceiveFail(mSendOTPResponse);
         }
     }
 
@@ -102,7 +168,31 @@ public class VerifyEmailViewModel extends AndroidViewModel {
         return otpResponse;
     }
 
+    public OnSendOTPEvent getSendOTPEvent() {
+        return sendOTPEvent;
+    }
+
+    public void setSendOTPEvent(OnSendOTPEvent sendOTPEvent) {
+        this.sendOTPEvent = sendOTPEvent;
+    }
+
+    public OnOTPVerifyEvent getOnOTPVerifyEvent() {
+        return onOTPVerifyEvent;
+    }
+
+    public void setOnOTPVerifyEvent(OnOTPVerifyEvent onOTPVerifyEvent) {
+        this.onOTPVerifyEvent = onOTPVerifyEvent;
+    }
+
     public void setOtpResponse(SendOTPResponse otpResponse) {
         this.otpResponse = otpResponse;
+    }
+
+    public MutableLiveData<String> getCount() {
+        return count;
+    }
+
+    public void setCount(MutableLiveData<String> count) {
+        this.count = count;
     }
 }

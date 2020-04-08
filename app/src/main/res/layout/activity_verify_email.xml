@@ -19,8 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:padding="16dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_undraw_email"
+            android:src="@drawable/ic_undraw_envelope"
             app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +79,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@+id/btnSendMail"
+                app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
@@ -89,10 +88,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:autofillHints="-"
                     android:fontFamily="@font/popin"
                     android:inputType="numberSigned"
                     android:text="@={model.otp1}"
+                    android:imeOptions="actionNext"
                     android:textAlignment="center"
                     android:textSize="30sp"
                     android:textStyle="bold"
@@ -103,8 +102,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:autofillHints="-"
                     android:fontFamily="@font/popin"
+                    android:imeOptions="actionNext"
                     android:inputType="numberSigned"
                     android:text="@={model.otp2}"
                     android:textAlignment="center"
@@ -117,10 +116,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:autofillHints="-"
                     android:fontFamily="@font/popin"
                     android:inputType="numberSigned"
                     android:text="@={model.otp3}"
+                    android:imeOptions="actionNext"
                     android:textAlignment="center"
                     android:textSize="30sp"
                     android:textStyle="bold"
@@ -130,8 +129,8 @@
                     android:id="@+id/otp4"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
                     android:layout_weight="1"
-                    android:autofillHints="-"
                     android:fontFamily="@font/popin"
                     android:inputType="numberSigned"
                     android:text="@={model.otp4}"
@@ -145,8 +144,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:autofillHints="-"
                     android:fontFamily="@font/popin"
+                    android:imeOptions="actionNext"
                     android:inputType="numberSigned"
                     android:text="@={model.otp5}"
                     android:textAlignment="center"
@@ -159,10 +158,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:autofillHints="-"
                     android:fontFamily="@font/popin"
                     android:inputType="numberSigned"
                     android:text="@={model.otp6}"
+                    android:imeActionId="@android:integer/config_shortAnimTime"
+                    android:imeOptions="actionNext"
                     android:textAlignment="center"
                     android:textSize="30sp"
                     android:textStyle="bold"
@@ -171,7 +171,7 @@
 
 
             <Button
-                android:id="@+id/btnSendMail"
+                android:id="@+id/btnConfirm"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sign_button_hight"
                 android:layout_marginStart="16dp"
@@ -183,28 +183,77 @@
                 android:text="@string/confirm"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                app:layout_constraintBottom_toTopOf="@+id/txtResend"
+                app:layout_constraintBottom_toTopOf="@+id/linText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
 
-            <TextView
-                android:id="@+id/txtResend"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linText"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/text_heigth"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/popin"
-                android:gravity="center|end"
-                android:text="@string/resend_email"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textColor="@color/blue_gray"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/txtResendSmg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/text_heigth"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/popin"
+                    android:gravity="center|end"
+                    android:text="@string/resend_email"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/blue_gray"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtResend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/text_heigth"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/popin"
+                    android:gravity="center|end"
+                    android:onClick="@{model::sendOTP}"
+                    android:text="@string/resend"
+                    android:clickable="false"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/txtResendSmg"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtResendCountDown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/text_heigth"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/popin"
+                    android:gravity="center|end"
+                    android:text="@={model.count}"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorAccent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/txtResend"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <ProgressBar
             android:id="@+id/progressBar"

@@ -85,7 +85,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
 
 
     @Override
-    public void onSendOTPSuccess(SendOTPResponse response) {
+    public void onOTPReceiveSuccess(SendOTPResponse response) {
         mBinding.progressBar.setVisibility(View.GONE);
         ViewUtil.enableDisableView(mBinding.getRoot(),true);
 
@@ -99,11 +99,11 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
     }
 
     @Override
-    public void onSendOTPFail(SendOTPResponse response) {
+    public void onOTPReceiveFail(SendOTPResponse response) {
 
         mBinding.progressBar.setVisibility(View.GONE);
         ViewUtil.enableDisableView(mBinding.getRoot(),true);
-      //  Log.d(Constants.TAG, "onSendOTPFail: "+new Gson().toJson(response));
+      //  Log.d(Constants.TAG, "onOTPReceiveFail: "+new Gson().toJson(response));
 
         if(null!=response && !response.isStatus()){
             StringBuffer errorBuffer=new StringBuffer();

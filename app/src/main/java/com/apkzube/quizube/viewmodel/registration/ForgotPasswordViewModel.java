@@ -12,7 +12,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.activity.registration.ForgotPasswordActivity;
-import com.apkzube.quizube.activity.registration.LoginActivity;
 import com.apkzube.quizube.events.registration.OnSendOTPEvent;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
 import com.apkzube.quizube.service.registration.RegistrationService;
@@ -55,9 +54,9 @@ public class ForgotPasswordViewModel extends AndroidViewModel {
                 @Override
                 public void onResponse(Call<SendOTPResponse> call, Response<SendOTPResponse> response) {
                     if(null!=response.body() && response.body().isStatus()){
-                        sendOTPEvent.onSendOTPSuccess(response.body());
+                        sendOTPEvent.onOTPReceiveSuccess(response.body());
                     }else{
-                        sendOTPEvent.onSendOTPFail(response.body());
+                        sendOTPEvent.onOTPReceiveFail(response.body());
                     }
                 }
 
@@ -68,7 +67,7 @@ public class ForgotPasswordViewModel extends AndroidViewModel {
                     Error mError = new Error(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP005.toString(), t.getMessage(), "REG");
                     errors.add(mError);
                     mResponse.setErrors(errors);
-                    sendOTPEvent.onSendOTPFail(mResponse);
+                    sendOTPEvent.onOTPReceiveFail(mResponse);
                 }
             });
 
@@ -76,7 +75,7 @@ public class ForgotPasswordViewModel extends AndroidViewModel {
             mSendOTPResponse=new SendOTPResponse();
             mSendOTPResponse.setStatus(false);
             mSendOTPResponse.setErrors(errors);
-            sendOTPEvent.onSendOTPFail(mSendOTPResponse);
+            sendOTPEvent.onOTPReceiveFail(mSendOTPResponse);
         }
     }
 
