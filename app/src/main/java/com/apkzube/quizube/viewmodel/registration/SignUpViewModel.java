@@ -64,6 +64,8 @@ public class SignUpViewModel extends AndroidViewModel {
             mQueryMap.put("user_name", userMst.getUserName());
             mQueryMap.put("email", userMst.getEmailId());
             mQueryMap.put("password", userMst.getPassword());
+            mQueryMap.put("is_facebook_login", "0");
+            mQueryMap.put("is_google_login", "0");
 
             RegistrationService service = RegistrationServiceImpl.getService();
             final Call<RegistrationResponse> responseCall = service.registerUser(mQueryMap);
