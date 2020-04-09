@@ -9,7 +9,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apkzube.quizube.R;
-import com.apkzube.quizube.activity.registration.SignUpActivity;
 import com.apkzube.quizube.activity.registration.UpdatePasswordActivity;
 import com.apkzube.quizube.events.registration.OnPasswordUpdateEvent;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
@@ -51,7 +50,7 @@ public class UpdatePasswordViewModel extends AndroidViewModel {
                 mQueryMap.put("password",password.getValue());
                 RegistrationService service= RegistrationServiceImpl.getService();
 
-                service.updatePasword(mQueryMap).enqueue(new Callback<UpdatePasswordResponse>() {
+                service.updatePassword(mQueryMap).enqueue(new Callback<UpdatePasswordResponse>() {
                     @Override
                     public void onResponse(Call<UpdatePasswordResponse> call, Response<UpdatePasswordResponse> response) {
                         if(null!=response.body() && response.body().isStatus()){

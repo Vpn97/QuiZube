@@ -2,7 +2,7 @@ package com.apkzube.quizube.service.registration;
 
 import com.apkzube.quizube.response.registration.Count;
 import com.apkzube.quizube.response.registration.LoginResponse;
-import com.apkzube.quizube.response.registration.RegistratoinResponse;
+import com.apkzube.quizube.response.registration.RegistrationResponse;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
 import com.apkzube.quizube.response.registration.UpdatePasswordResponse;
 import com.apkzube.quizube.util.CommonRestURL;
@@ -20,7 +20,7 @@ public interface RegistrationService {
     Call<Count> getIsValidUser(@Query("user_id") String userId);
 
     @POST(CommonRestURL.REGISTER_USER_URL)
-    Call<RegistratoinResponse> registerUser(@QueryMap HashMap<String,String> mQueryMap);
+    Call<RegistrationResponse> registerUser(@QueryMap HashMap<String,String> mQueryMap);
 
     @POST(CommonRestURL.LOGIN_USER_URL)
     Call<LoginResponse> loginRequest(@QueryMap HashMap<String,String> mQueryMap);
@@ -30,6 +30,6 @@ public interface RegistrationService {
 
 
     @POST(CommonRestURL.UPDATE_PASSWORD_URL)
-    Call<UpdatePasswordResponse> updatePasword(@QueryMap HashMap<String,String> mQueryMap);
+    Call<UpdatePasswordResponse> updatePassword(@QueryMap HashMap<String,String> mQueryMap);
 
 }

@@ -1,10 +1,10 @@
 package com.apkzube.quizube.events.registration;
 
-import com.apkzube.quizube.response.registration.RegistratoinResponse;
+import com.apkzube.quizube.response.registration.RegistrationResponse;
 
 public interface OnRegistrationEvent {
 
-    public void onRegistrationSuccess(RegistratoinResponse responce);
-    public void onRegistrationFail(RegistratoinResponse responce);
+    public void onRegistrationSuccess(RegistrationResponse responce);
+    public void onRegistrationFail(RegistrationResponse responce);
     public  void onRegistrationStart();
 }

@@ -43,7 +43,7 @@
     <string name="re_try">RETRY</string>
     <string name="confirm">Confirm</string>
     <string name="verify_email">Verify your email</string>
-    <string name="verify_email_msg">Enter the verification code\njust send you on</string>
+    <string name="verify_email_msg">Enter the verification code\njust send you on : </string>
     <string name="resend_email">didn\'t receive email?</string>
     <string name="resend">Resend</string>
     <string name="otp_verify_sucessfully">OTP Verified Successfully</string>
@@ -52,6 +52,8 @@
     <string name="update_password">Update password</string>
     <string name="update">Update</string>
     <string name="send_email_response_obj">send_email_response_obj</string>
+    <string name="from_sign_up">from_sign_up</string>
+    <string name="email_id_key">email_id_key</string>
 
 
 </resources>

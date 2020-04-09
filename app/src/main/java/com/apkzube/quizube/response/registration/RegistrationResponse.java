@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class RegistratoinResponse implements Parcelable {
+public class RegistrationResponse implements Parcelable {
 
     @SerializedName("status")
     @Expose
@@ -20,16 +20,16 @@ public class RegistratoinResponse implements Parcelable {
     private ArrayList<Error> errors;
 
 
-    public RegistratoinResponse(boolean status, ArrayList<Error> errors) {
+    public RegistrationResponse(boolean status, ArrayList<Error> errors) {
         this.status = status;
         this.errors = errors;
     }
 
-    public RegistratoinResponse() {
+    public RegistrationResponse() {
     }
 
 
-    protected RegistratoinResponse(Parcel in) {
+    protected RegistrationResponse(Parcel in) {
         status = in.readByte() != 0;
         errors = in.createTypedArrayList(Error.CREATOR);
     }
@@ -45,15 +45,15 @@ public class RegistratoinResponse implements Parcelable {
         return 0;
     }
 
-    public static final Creator<RegistratoinResponse> CREATOR = new Creator<RegistratoinResponse>() {
+    public static final Creator<RegistrationResponse> CREATOR = new Creator<RegistrationResponse>() {
         @Override
-        public RegistratoinResponse createFromParcel(Parcel in) {
-            return new RegistratoinResponse(in);
+        public RegistrationResponse createFromParcel(Parcel in) {
+            return new RegistrationResponse(in);
         }
 
         @Override
-        public RegistratoinResponse[] newArray(int size) {
-            return new RegistratoinResponse[size];
+        public RegistrationResponse[] newArray(int size) {
+            return new RegistrationResponse[size];
         }
     };
 

@@ -13,8 +13,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.activity.registration.SignUpActivity;
 import com.apkzube.quizube.events.registration.OnRegistrationEvent;
+import com.apkzube.quizube.events.registration.OnSendOTPEvent;
 import com.apkzube.quizube.model.registration.RegUserMst;
-import com.apkzube.quizube.response.registration.RegistratoinResponse;
+import com.apkzube.quizube.response.registration.RegistrationResponse;
 import com.apkzube.quizube.service.registration.RegistrationService;
 import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
 import com.apkzube.quizube.util.Constants;
@@ -36,11 +37,11 @@ public class SignUpViewModel extends AndroidViewModel {
     private  MutableLiveData <String> password=new MutableLiveData<>();
     private  MutableLiveData <String> confirmPassword =new MutableLiveData<>();
 
+    private OnSendOTPEvent sendOTPEvent;
 
 
-
-    OnRegistrationEvent onRegistrationEvent;
-    Application application;
+    private OnRegistrationEvent onRegistrationEvent;
+    private  Application application;
 
     public SignUpViewModel(@NonNull Application application) {
         super(application);
@@ -65,11 +66,11 @@ public class SignUpViewModel extends AndroidViewModel {
             mQueryMap.put("password", userMst.getPassword());
 
             RegistrationService service = RegistrationServiceImpl.getService();
-            final Call<RegistratoinResponse> responseCall = service.registerUser(mQueryMap);
-            responseCall.enqueue(new Callback<RegistratoinResponse>() {
+            final Call<RegistrationResponse> responseCall = service.registerUser(mQueryMap);
+            responseCall.enqueue(new Callback<RegistrationResponse>() {
                 @Override
-                public void onResponse(Call<RegistratoinResponse> call, Response<RegistratoinResponse> response) {
-                    RegistratoinResponse mResponse = response.body();
+                public void onResponse(Call<RegistrationResponse> call, Response<RegistrationResponse> response) {
+                    RegistrationResponse mResponse = response.body();
                     Log.d(Constants.TAG, "onResponse: " + new Gson().toJson(response.body()));
 
                     if (mResponse.isStatus()) {
@@ -80,8 +81,8 @@ public class SignUpViewModel extends AndroidViewModel {
                 }
 
                 @Override
-                public void onFailure(Call<RegistratoinResponse> call, Throwable t) {
-                    RegistratoinResponse mResponse = new RegistratoinResponse();
+                public void onFailure(Call<RegistrationResponse> call, Throwable t) {
+                    RegistrationResponse mResponse = new RegistrationResponse();
                     mResponse.setStatus(false);
                     Error mError = new Error("REG009", t.getMessage(), "REG");
                     errors.add(mError);
@@ -91,13 +92,14 @@ public class SignUpViewModel extends AndroidViewModel {
             });
 
         } else {
-            RegistratoinResponse mResponse = new RegistratoinResponse();
+            RegistrationResponse mResponse = new RegistrationResponse();
             mResponse.setStatus(false);
             mResponse.setErrors(errors);
             onRegistrationEvent.onRegistrationFail(mResponse);
         }
 
     }
+
 
     private ArrayList<Error> isValidData(RegUserMst userMst) {
         ArrayList<Error> errors = new ArrayList<>();
@@ -145,6 +147,22 @@ public class SignUpViewModel extends AndroidViewModel {
         return errors;
     }
 
+    public OnSendOTPEvent getSendOTPEvent() {
+        return sendOTPEvent;
+    }
+
+    public void setSendOTPEvent(OnSendOTPEvent sendOTPEvent) {
+        this.sendOTPEvent = sendOTPEvent;
+    }
+
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
+    }
 
     public MutableLiveData<String> getUserId() {
         return userId;

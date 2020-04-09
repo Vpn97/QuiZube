@@ -39,6 +39,8 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
     private Snackbar snackbar;
     private CountDownTimer countDownTimer;
 
+    private boolean isFromSignUp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,14 +56,27 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
         mBinding.setModel(model);
         model.setSendOTPEvent(this);
         model.setOnOTPVerifyEvent(this);
+
+
         Intent intent = getIntent();
         if (null != intent) {
-            SendOTPResponse otpResponse = intent.getParcelableExtra(getString(R.string.send_email_response_obj));
-            Log.d(Constants.TAG, "allocation: " + new Gson().toJson(otpResponse));
-            if (null != otpResponse && null != otpResponse.getOtp()) {
-                model.setOtpResponse(otpResponse);/**/
-                mBinding.txt.setText(String.format("%s: %s", mBinding.txt.getText(), otpResponse.getEmail()));
+            isFromSignUp=intent.getBooleanExtra(getString(R.string.from_sign_up),false);
+            if(isFromSignUp){
+                String email=intent.getStringExtra(getString(R.string.email_id_key));
+                model.setOtpResponse(new SendOTPResponse());
+                model.getOtpResponse().setEmail(email);
+                mBinding.txt.setText(getString(R.string.verify_email_msg)+" "+email);
+                mBinding.txtResend.setEnabled(true);
+                mBinding.txtResend.setClickable(true);
+                model.sendOTP(mBinding.txtResend);
+            }else{
 
+                SendOTPResponse otpResponse = intent.getParcelableExtra(getString(R.string.send_email_response_obj));
+                Log.d(Constants.TAG, "allocation: " + new Gson().toJson(otpResponse));
+                if (null != otpResponse && null != otpResponse.getOtp()) {
+                    model.setOtpResponse(otpResponse);/**/
+                    mBinding.txt.setText(getString(R.string.verify_email_msg)+otpResponse.getEmail());
+                }
             }
         }
 
@@ -72,15 +87,11 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
 
     private void setEvent() {
 
-
-        mBinding.btnConfirm.setEnabled(false);
-        mBinding.txtResend.setEnabled(false);
-
         countDownTimer = new CountDownTimer(60000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 //model.getCount().setValue(String.valueOf();
-                mBinding.txtResendCountDown.setText(String.format("%s:00", String.valueOf(millisUntilFinished / 1000)));
+                mBinding.txtResendCountDown.setText(String.valueOf(millisUntilFinished / 1000)+":00");
                 //here you can have your logic to set text to edittext
             }
 
@@ -93,8 +104,12 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
 
         };
 
-        countDownTimer.start();
+        mBinding.btnConfirm.setEnabled(false);
+        mBinding.txtResend.setEnabled(false);
 
+        if(!isFromSignUp) {
+            countDownTimer.start();
+        }
 
         editTexts = new EditText[]{mBinding.otp1, mBinding.otp2, mBinding.otp3, mBinding.otp4, mBinding.otp5, mBinding.otp6};
 
@@ -144,11 +159,18 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
     public void onOTPVerifySuccess(SendOTPResponse sendOTPResponse) {
 
         //Toast.makeText(this, R.string.otp_verify_sucessfully, Toast.LENGTH_SHORT).show();
-        setVisibilityProgressbar(false);
-        Intent intent=new Intent(this,UpdatePasswordActivity.class);
-        intent.putExtra(getString(R.string.send_email_response_obj),sendOTPResponse);
-        startActivity(intent);
-        finish();
+
+        if(isFromSignUp){
+            Intent intent=new Intent();
+            setResult(RESULT_OK,intent);
+            finish();
+        }else {
+            setVisibilityProgressbar(false);
+            Intent intent = new Intent(this, UpdatePasswordActivity.class);
+            intent.putExtra(getString(R.string.send_email_response_obj), sendOTPResponse);
+            startActivity(intent);
+            finish();
+        }
 
     }
 

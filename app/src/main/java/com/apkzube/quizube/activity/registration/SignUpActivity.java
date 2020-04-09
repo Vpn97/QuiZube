@@ -1,5 +1,6 @@
 package com.apkzube.quizube.activity.registration;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -16,7 +17,7 @@ import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivitySignUpBinding;
 import com.apkzube.quizube.events.registration.OnRegistrationEvent;
 import com.apkzube.quizube.response.registration.Count;
-import com.apkzube.quizube.response.registration.RegistratoinResponse;
+import com.apkzube.quizube.response.registration.RegistrationResponse;
 import com.apkzube.quizube.service.registration.RegistrationService;
 import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
 import com.apkzube.quizube.util.Constants;
@@ -27,8 +28,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUpActivity extends AppCompatActivity implements OnRegistrationEvent {
+public class SignUpActivity extends AppCompatActivity implements OnRegistrationEvent{
 
+    private static final int VERIFY_EMAIL_REQUEST_CODE = 1;
     private ActivitySignUpBinding signUpBinding;
     private SignUpViewModel model;
 
@@ -159,13 +161,15 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
     }
 
     @Override
-    public void onRegistrationSuccess(RegistratoinResponse response) {
+    public void onRegistrationSuccess(RegistrationResponse response) {
        // Toast.makeText(this, "Registration Success", Toast.LENGTH_SHORT).show();
         if (response.isStatus()) {
-            Intent intent=new Intent();
-            intent.putExtra("user_id",model.getUserId().getValue());
-            setResult(RESULT_OK,intent);
-            finish();
+
+            startActivityForResult(new Intent(this,VerifyEmailActivity.class)
+                    .putExtra(getString(R.string.from_sign_up),true)
+                    .putExtra(getString(R.string.email_id_key),model.getEmail().getValue()),VERIFY_EMAIL_REQUEST_CODE);
+
+
         } else {
             StringBuilder errorMsg = new StringBuilder();
             if (null != response.getErrors()) {
@@ -186,7 +190,7 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
     }
 
     @Override
-    public void onRegistrationFail(RegistratoinResponse response) {
+    public void onRegistrationFail(RegistrationResponse response) {
         //Toast.makeText(this, "Registration Fail", Toast.LENGTH_SHORT).show();
         StringBuilder errorMsg = new StringBuilder();
         if (null != response.getErrors() && response.getErrors().size() > 0) {
@@ -238,6 +242,20 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
     @Override
     public void onRegistrationStart() {
         signUpBinding.txtError.setVisibility(View.GONE);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==VERIFY_EMAIL_REQUEST_CODE && resultCode==RESULT_OK){
+            Intent intent=new Intent();
+            intent.putExtra("user_id",model.getUserId().getValue());
+            setResult(RESULT_OK,intent);
+            finish();
+        }
+
     }
 
     public static enum ERROR_CODE {

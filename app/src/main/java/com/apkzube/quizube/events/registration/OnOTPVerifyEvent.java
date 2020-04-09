@@ -1,6 +1,5 @@
 package com.apkzube.quizube.events.registration;
 
-import com.apkzube.quizube.response.registration.RegistratoinResponse;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
 
 public interface OnOTPVerifyEvent {

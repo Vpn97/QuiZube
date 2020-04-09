@@ -225,7 +225,6 @@
                     android:gravity="center|end"
                     android:onClick="@{model::sendOTP}"
                     android:text="@string/resend"
-                    android:clickable="false"
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textColor="@color/colorAccent"

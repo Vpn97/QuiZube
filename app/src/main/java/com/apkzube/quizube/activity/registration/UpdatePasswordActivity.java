@@ -204,15 +204,6 @@ public class UpdatePasswordActivity extends AppCompatActivity implements OnPassw
 
         snackbar.setText(msg);
 
- /*       if(errorCode.equalsIgnoreCase(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP002.toString())){
-            //not reg user
-            snackbar.setAction(R.string.sign_up,view -> {
-                startActivity(new Intent(this,SignUpActivity.class));
-                finish();
-            });
-        }*/
-
-
         if(errorCode.equalsIgnoreCase(ERROR_CODE.PASS002.toString())){
             //responce fail
             snackbar.setAction(R.string.re_try,view -> {
