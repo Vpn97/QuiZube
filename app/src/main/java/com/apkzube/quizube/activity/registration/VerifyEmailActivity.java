@@ -57,7 +57,7 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
         model.setOnOTPVerifyEvent(this);
         Intent intent = getIntent();
         if (null != intent) {
-            SendOTPResponse otpResponse = intent.getParcelableExtra("response");
+            SendOTPResponse otpResponse = intent.getParcelableExtra(getString(R.string.send_email_response_obj));
             Log.d(Constants.TAG, "allocation: " + new Gson().toJson(otpResponse));
             if (null != otpResponse && null != otpResponse.getOtp()) {
                 model.setOtpResponse(otpResponse);/**/
@@ -79,13 +79,14 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
         countDownTimer = new CountDownTimer(60000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                model.getCount().setValue(String.valueOf(millisUntilFinished / 1000)+":00");
+                //model.getCount().setValue(String.valueOf();
+                mBinding.txtResendCountDown.setText(String.valueOf(millisUntilFinished / 1000)+":00");
                 //here you can have your logic to set text to edittext
             }
 
             public void onFinish() {
-                //mBinding.txtResendCountDown.setText("done!");
-                model.getCount().setValue("");
+                mBinding.txtResendCountDown.setText("");
+                //model.getCount().setValue("");
                 model.getOtpResponse().setExpired(true);
                 mBinding.txtResend.setEnabled(true);
             }
@@ -144,8 +145,12 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
     @Override
     public void onOTPVerifySuccess(SendOTPResponse sendOTPResponse) {
 
-        Toast.makeText(this, R.string.otp_verify_sucessfully, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, R.string.otp_verify_sucessfully, Toast.LENGTH_SHORT).show();
         setVisibilityProgressbar(false);
+        Intent intent=new Intent(this,UpdatePasswordActivity.class);
+        intent.putExtra(getString(R.string.send_email_response_obj),sendOTPResponse);
+        startActivity(intent);
+        finish();
 
     }
 
@@ -164,7 +169,6 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
     public void onOTPExpired(SendOTPResponse sendOTPResponse) {
 
         Toast.makeText(this, getString(R.string.otp_expired), Toast.LENGTH_SHORT).show();
-
         setVisibilityProgressbar(false);
     }
 

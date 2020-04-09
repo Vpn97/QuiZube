@@ -1,7 +1,6 @@
 package com.apkzube.quizube.viewmodel.registration;
 
 import android.app.Application;
-import android.os.CountDownTimer;
 import android.view.View;
 
 import androidx.annotation.NonNull;

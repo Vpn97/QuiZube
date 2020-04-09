@@ -49,6 +49,9 @@
     <string name="otp_verify_sucessfully">OTP Verified Successfully</string>
     <string name="otp_does_not_match">OTP does not match</string>
     <string name="otp_expired">OTP Expired</string>
+    <string name="update_password">Update password</string>
+    <string name="update">Update</string>
+    <string name="send_email_response_obj">send_email_response_obj</string>
 
 
 </resources>

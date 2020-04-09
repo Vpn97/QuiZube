@@ -31,5 +31,6 @@
     <color name="error_text">#E53935</color>
     <color name="disable_back_color">#000000</color>
     <color name="back_grey">#f2f2f2</color>
+    <color name="back_update_password_undraw">#3f3d56</color>
 
 </resources>
