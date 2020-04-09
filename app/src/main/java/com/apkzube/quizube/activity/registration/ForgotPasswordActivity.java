@@ -2,7 +2,6 @@ package com.apkzube.quizube.activity.registration;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivityForgotPasswordBinding;
@@ -21,7 +19,6 @@ import com.apkzube.quizube.util.Error;
 import com.apkzube.quizube.util.ViewUtil;
 import com.apkzube.quizube.viewmodel.registration.ForgotPasswordViewModel;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 
 public class ForgotPasswordActivity extends AppCompatActivity implements OnSendOTPEvent {
 
@@ -48,16 +45,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
     }
 
     private void setEvent() {
-        model.getEmail().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-
-            }
-        });
-
-        mBinding.txtBackToLogin.setOnClickListener(view -> {
-            finish();
-        });
+        mBinding.txtBackToLogin.setOnClickListener(view -> finish());
     }
 
 
@@ -75,9 +63,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
 
         if(TextUtils.isEmpty(errorCode)|| errorCode.equalsIgnoreCase(SEND_OTP_ERROR_CODE.OTP003.toString()) || errorCode.equalsIgnoreCase(SEND_OTP_ERROR_CODE.OTP005.toString()) ){
             //responce fail
-            snackbar.setAction(R.string.re_try,view -> {
-                mBinding.btnSendMail.performClick();
-            });
+            snackbar.setAction(R.string.re_try,view -> mBinding.btnSendMail.performClick());
         }
 
         snackbar.show();

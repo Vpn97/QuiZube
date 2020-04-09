@@ -115,6 +115,9 @@ public class UpdatePasswordActivity extends AppCompatActivity implements OnPassw
 
         if (response.isStatus()) {
             Toast.makeText(this, "Password updated Successful", Toast.LENGTH_SHORT).show();
+            finish();
+        }else{
+            setSnackBar(getString(R.string.server_error), ERROR_CODE.PASS002.toString());
         }
     }
 

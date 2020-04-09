@@ -21,7 +21,6 @@ import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivityVerifyEmailBinding;
 import com.apkzube.quizube.events.registration.OnOTPVerifyEvent;
 import com.apkzube.quizube.events.registration.OnSendOTPEvent;
-import com.apkzube.quizube.response.registration.RegistratoinResponse;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.Error;
@@ -30,13 +29,13 @@ import com.apkzube.quizube.viewmodel.registration.VerifyEmailViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
+import java.util.Objects;
+
 public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPEvent, OnOTPVerifyEvent {
 
     private ActivityVerifyEmailBinding mBinding;
     private VerifyEmailViewModel model;
     private EditText[] editTexts;
-    private OnOTPVerifyEvent onOTPVerifyEvent;
-    private OnSendOTPEvent sendOTPEvent;
     private Snackbar snackbar;
     private CountDownTimer countDownTimer;
 
@@ -61,6 +60,8 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
             Log.d(Constants.TAG, "allocation: " + new Gson().toJson(otpResponse));
             if (null != otpResponse && null != otpResponse.getOtp()) {
                 model.setOtpResponse(otpResponse);/**/
+                mBinding.txt.setText(String.format("%s: %s", mBinding.txt.getText(), otpResponse.getEmail()));
+
             }
         }
 
@@ -79,7 +80,7 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
 
             public void onTick(long millisUntilFinished) {
                 //model.getCount().setValue(String.valueOf();
-                mBinding.txtResendCountDown.setText(String.valueOf(millisUntilFinished / 1000)+":00");
+                mBinding.txtResendCountDown.setText(String.format("%s:00", String.valueOf(millisUntilFinished / 1000)));
                 //here you can have your logic to set text to edittext
             }
 
@@ -122,7 +123,7 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
         snackbar.setText(msg);
         if(errorCode.equalsIgnoreCase(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP002.toString())){
             //not reg user
-            snackbar.setAction(R.string.sign_up,view -> {
+            snackbar.setAction(R.string.sign_up,view ->  {
                 startActivity(new Intent(VerifyEmailActivity.this,SignUpActivity.class));
                 finish();
             });
@@ -131,9 +132,7 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
 
         if(TextUtils.isEmpty(errorCode)|| errorCode.equalsIgnoreCase(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP003.toString()) || errorCode.equalsIgnoreCase(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP005.toString()) ){
             //responce fail
-            snackbar.setAction(R.string.re_try,view -> {
-                mBinding.txtResend.performClick();
-            });
+            snackbar.setAction(R.string.re_try,view -> mBinding.txtResend.performClick());
         }
 
         snackbar.show();
@@ -307,7 +306,7 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
         private void hideKeyboard() {
             if (getCurrentFocus() != null) {
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                Objects.requireNonNull(inputMethodManager).hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
             }
         }
