@@ -83,4 +83,9 @@ public class Error implements Parcelable {
     public void setModule(String module) {
         this.module = module;
     }
+
+
+    public int toIntValue(){
+        return Integer.parseInt(this.code.substring(code.length()-3));
+    }
 }

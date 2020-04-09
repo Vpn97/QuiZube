@@ -123,6 +123,13 @@ public class SignUpViewModel extends AndroidViewModel {
 
         }
 
+        if (null == userMst.getConfPassword() || TextUtils.isEmpty(userMst.getConfPassword())) {
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+        }else if(!userMst.getPassword().equals(userMst.getConfPassword())){
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+        }
+
+
         if (null != userMst.getPassword() && (userMst.getPassword().length() > 6 || userMst.getPassword().length() < 20)) {
 
             if (null != userMst.getConfPassword() && !TextUtils.isEmpty(userMst.getConfPassword()) && !userMst.getPassword().equals(userMst.getConfPassword())) {
@@ -132,6 +139,8 @@ public class SignUpViewModel extends AndroidViewModel {
         } else {
             errors.add(new Error(SignUpActivity.ERROR_CODE.REG004.toString(), application.getString(R.string.password_length_msg), "REG"));
         }
+
+
 
         return errors;
     }

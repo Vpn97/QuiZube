@@ -94,6 +94,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
             Intent intent=new Intent(this,VerifyEmailActivity.class);
             intent.putExtra(getString(R.string.send_email_response_obj),response);
             startActivity(intent);
+            finish();
         }
 
     }

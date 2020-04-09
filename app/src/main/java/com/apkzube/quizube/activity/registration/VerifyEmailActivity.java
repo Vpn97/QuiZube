@@ -66,8 +66,7 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
 
         mBinding.otp1.requestFocus();
         mBinding.otp1.setShowSoftInputOnFocus(true);
-
-
+        snackbar=Snackbar.make(mBinding.getRoot(), "", Snackbar.LENGTH_LONG);
     }
 
     private void setEvent() {

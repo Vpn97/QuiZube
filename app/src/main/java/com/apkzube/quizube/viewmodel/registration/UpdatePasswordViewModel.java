@@ -37,6 +37,7 @@ public class UpdatePasswordViewModel extends AndroidViewModel {
 
     public UpdatePasswordViewModel(@NonNull Application application) {
         super(application);
+        this.application=application;
     }
 
     public void updatePassword(View view){
@@ -81,6 +82,11 @@ public class UpdatePasswordViewModel extends AndroidViewModel {
                 response.setErrors(errors);
                 passwordUpdateEvent.onUpdatePasswordFail(response);
             }
+        }else{
+            UpdatePasswordResponse response=new UpdatePasswordResponse();
+            response.setStatus(false);
+            response.setErrors(errors);
+            passwordUpdateEvent.onUpdatePasswordFail(response);
         }
 
 
@@ -90,20 +96,28 @@ public class UpdatePasswordViewModel extends AndroidViewModel {
     public ArrayList<Error> validateInput(){
         ArrayList<Error> errors=new ArrayList<>();
         //password validation
-        if (null == password.getValue()|| TextUtils.isEmpty(password.getValue())) {
+        if (null == password.getValue() || TextUtils.isEmpty(password.getValue())) {
             errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS001.toString(), application.getString(R.string.password_can_be), "REG"));
 
         }
 
+        if (null == confirmPassword.getValue() || TextUtils.isEmpty(confirmPassword.getValue()) ) {
+            errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+        }else if(!password.getValue().equals(confirmPassword.getValue())){
+            errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+        }
+
+
         if (null != password.getValue() && (password.getValue().length() > 6 || password.getValue().length() < 20)) {
 
-            if (null != confirmPassword.getValue() && !TextUtils.isEmpty(confirmPassword.getValue()) && !password.getValue().equals(confirmPassword.getValue())) {
+            if (null != confirmPassword.getValue() &&  !password.getValue().equals(confirmPassword.getValue())) {
                 errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
             }
 
         } else {
             errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS006.toString(), application.getString(R.string.password_length_msg), "REG"));
         }
+
 
         return errors;
     }
