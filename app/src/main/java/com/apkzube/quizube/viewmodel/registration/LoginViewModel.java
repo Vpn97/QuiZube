@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.activity.registration.LoginActivity;
 import com.apkzube.quizube.events.registration.OnLoginEvent;
+import com.apkzube.quizube.events.registration.OnValidateAuthEvent;
 import com.apkzube.quizube.response.registration.LoginResponse;
 import com.apkzube.quizube.service.registration.RegistrationService;
 import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
@@ -34,6 +35,7 @@ public class LoginViewModel extends AndroidViewModel {
     private MutableLiveData<String> password = new MutableLiveData<>();
     private OnLoginEvent loginEvent;
 
+    private OnValidateAuthEvent authEvent;
 
     public LoginViewModel(@NonNull Application application) {
         super(application);
@@ -87,7 +89,7 @@ public class LoginViewModel extends AndroidViewModel {
             registrationService.loginRequest(mQueryMap).enqueue(new Callback<LoginResponse>() {
                 @Override
                 public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                    Log.d(Constants.TAG, "onResponse: "+(new Gson().toJson(response.body())));
+                    Log.d(Constants.TAG, "onResponse: " + (new Gson().toJson(response.body())));
                     if (null != response.body() && response.body().isStatus()) {
                         loginEvent.onLoginSuccess(response.body());
                     } else {
@@ -99,7 +101,7 @@ public class LoginViewModel extends AndroidViewModel {
                 public void onFailure(Call<LoginResponse> call, Throwable t) {
                     LoginResponse mResponse = new LoginResponse();
                     mResponse.setStatus(false);
-                    Error mError = new Error(LoginActivity.LOGIN_EROR_CODE.REG012.toString(), t.getMessage(), "REG");
+                    Error mError = new Error(LoginActivity.LOGIN_ERROR_CODE.REG012.toString(), t.getMessage(), "REG");
                     errors.add(mError);
                     mResponse.setErrors(errors);
                     loginEvent.onLoginFail(mResponse);
@@ -116,16 +118,60 @@ public class LoginViewModel extends AndroidViewModel {
 
     }
 
+
+    public void validateAuthUserLogin(String email, String name, int loginCode) {
+        authEvent.onValidateAuthStart();
+        ArrayList<Error> errors = new ArrayList<>();
+
+        if (null != email && !TextUtils.isEmpty(email)) {
+            RegistrationService registrationService = RegistrationServiceImpl.getService();
+            HashMap<String, String> mQueryMap = new HashMap<>();
+            mQueryMap.put("email", email);
+
+            registrationService.validateAuthUserLogin(mQueryMap).enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                    Log.d(Constants.TAG, "onResponse: " + (new Gson().toJson(response.body())));
+                    if (null != response.body() && response.body().isStatus()) {
+                        authEvent.onValidateAuthSuccess(response.body(),loginCode);
+                    } else {
+                        authEvent.onUserNotRegistered(response.body(),email,name,loginCode);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
+                    LoginResponse mResponse = new LoginResponse();
+                    mResponse.setStatus(false);
+                    Error mError = new Error(LoginActivity.LOGIN_ERROR_CODE.REG012.toString(), t.getMessage(), "REG");
+                    errors.add(mError);
+                    mResponse.setErrors(errors);
+                    authEvent.onValidateAuthFail(mResponse);
+                }
+            });
+
+
+        } else {
+            LoginResponse mResponse = new LoginResponse();
+            mResponse.setStatus(false);
+            Error mError = new Error(LoginActivity.LOGIN_ERROR_CODE.LOGIN001.toString(), application.getString(R.string.enter_email_msg), "REG");
+            errors.add(mError);
+            mResponse.setErrors(errors);
+            authEvent.onValidateAuthFail(mResponse);
+        }
+    }
+
+
     private ArrayList<Error> validateInput() {
         ArrayList<Error> errors = new ArrayList<>();
 
         if (null == userIdEmail.getValue() || TextUtils.isEmpty(userIdEmail.getValue())) {
-            errors.add(new Error(LoginActivity.LOGIN_EROR_CODE.REG001.toString(), application.getString(R.string.insert_user_id_password), "REG"));
+            errors.add(new Error(LoginActivity.LOGIN_ERROR_CODE.REG001.toString(), application.getString(R.string.insert_user_id_password), "REG"));
         }
 
         //password validation
         if (null == password.getValue() || TextUtils.isEmpty(password.getValue())) {
-            errors.add(new Error(LoginActivity.LOGIN_EROR_CODE.REG002.toString(), application.getString(R.string.enter_password), "REG"));
+            errors.add(new Error(LoginActivity.LOGIN_ERROR_CODE.REG002.toString(), application.getString(R.string.enter_password), "REG"));
         }
 
         return errors;
@@ -138,5 +184,14 @@ public class LoginViewModel extends AndroidViewModel {
 
     public void setLoginEvent(OnLoginEvent loginEvent) {
         this.loginEvent = loginEvent;
+    }
+
+
+    public OnValidateAuthEvent getAuthEvent() {
+        return authEvent;
+    }
+
+    public void setAuthEvent(OnValidateAuthEvent authEvent) {
+        this.authEvent = authEvent;
     }
 }

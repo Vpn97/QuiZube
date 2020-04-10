@@ -18,7 +18,7 @@ public class Constants {
     public static int SIGN_UP = 4;
     public static int NO_USER_LOGIN=5;
 
-    public static List<String> FB_PERIMISSON_LIST= Arrays.asList("email");
+    public static List<String> FB_PERMISSIONS_LIST = Arrays.asList("email","user_birthday","user_gender","user_posts");
 
 
 }

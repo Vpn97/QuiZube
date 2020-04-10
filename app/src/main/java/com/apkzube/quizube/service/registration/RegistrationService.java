@@ -28,8 +28,10 @@ public interface RegistrationService {
     @POST(CommonRestURL.SEND_OTP_URL)
     Call<SendOTPResponse> sendOTP(@QueryMap HashMap<String,String> mQueryMap);
 
-
     @POST(CommonRestURL.UPDATE_PASSWORD_URL)
     Call<UpdatePasswordResponse> updatePassword(@QueryMap HashMap<String,String> mQueryMap);
+
+    @POST(CommonRestURL.VALIDATE_AUTH_LOGIN_URL)
+    Call<LoginResponse> validateAuthUserLogin(@QueryMap HashMap<String,String> mQueryMap);
 
 }

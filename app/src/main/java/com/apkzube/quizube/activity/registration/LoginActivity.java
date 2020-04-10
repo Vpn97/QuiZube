@@ -20,10 +20,13 @@ import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivityLoginBinding;
 import com.apkzube.quizube.databinding.DialogSignInLayoutBinding;
 import com.apkzube.quizube.events.registration.OnLoginEvent;
+import com.apkzube.quizube.events.registration.OnValidateAuthEvent;
+import com.apkzube.quizube.model.registration.User;
 import com.apkzube.quizube.response.registration.LoginResponse;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.DataStorage;
 import com.apkzube.quizube.util.Error;
+import com.apkzube.quizube.util.ViewUtil;
 import com.apkzube.quizube.viewmodel.registration.LoginViewModel;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -47,35 +50,32 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 
 
-public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
+public class LoginActivity extends AppCompatActivity implements OnLoginEvent, OnValidateAuthEvent {
 
-    ActivityLoginBinding loginBinding;
-    DataStorage storage;
-    Dialog dialog;
-    LoginViewModel loginViewModel;
+    private ActivityLoginBinding loginBinding;
+    private DataStorage storage;
+    private Dialog dialog;
+    private LoginViewModel model;
 
     //binding
-    DialogSignInLayoutBinding mBinding;
-    OnLoginEvent loginEvent;
+    private DialogSignInLayoutBinding mBinding;
 
 
     //google sign in
-    LoginActivityClickListener listener;
-    GoogleSignInOptions gso;
-    GoogleSignInClient mGoogleSignInClient;
-    FirebaseAuth mAuth;
+    private LoginActivityClickListener listener;
+    private GoogleSignInOptions gso;
+    private GoogleSignInClient mGoogleSignInClient;
+    private FirebaseAuth mAuth;
 
 
     //facebook login
-    CallbackManager mCallbackManager;
-    LoginButton mFacbookLoginButton;
+    private CallbackManager mCallbackManager;
+    private LoginButton mFacebookLoginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
-        //LoginViewModel model= ViewModelProviders.of(this).get(LoginViewModel.class);
 
         allocation();
         setEvent();
@@ -83,20 +83,25 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
 
     private void allocation() {
         storage = new DataStorage(this, getString(R.string.user_data));
-        loginEvent = this;
         listener = new LoginActivityClickListener(this);
+
+        loginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        loginBinding.setClickListener(listener);
+        model = ViewModelProviders.of(this).get(LoginViewModel.class);
+        model.setAuthEvent(this);
+        model.setLoginEvent(this);
+
         mAuth = FirebaseAuth.getInstance();
-        mFacbookLoginButton = loginBinding.btnFbLogin;
-        mFacbookLoginButton.setLoginBehavior(LoginBehavior.DIALOG_ONLY);
+        mFacebookLoginButton = loginBinding.btnFbLogin;
+        mFacebookLoginButton.setLoginBehavior(LoginBehavior.DIALOG_ONLY);
         mCallbackManager = CallbackManager.Factory.create();
-        mFacbookLoginButton.setPermissions(Constants.FB_PERIMISSON_LIST);
+        mFacebookLoginButton.setPermissions(Constants.FB_PERMISSIONS_LIST);
         //set dialog for login
         setLoginDialog();
     }
 
     private void setEvent() {
-        loginBinding.setClickListener(listener);
-        mFacbookLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        mFacebookLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
@@ -108,8 +113,8 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     FirebaseUser user = mAuth.getCurrentUser();
-                                    Toast.makeText(LoginActivity.this, "Login By FaceBook " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                                    storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_FACEBOOK);
+                                    model.validateAuthUserLogin(user.getEmail(), user.getDisplayName(), Constants.LOGIN_FACEBOOK);
+                                    //Toast.makeText(LoginActivity.this, "Login By FaceBook " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(LoginActivity.this, "Authentication failed Facebook.", Toast.LENGTH_SHORT).show();
@@ -136,26 +141,20 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
         dialog = new Dialog(this, android.R.style.Theme_Material_Light_NoActionBar_Fullscreen);
         mBinding = DialogSignInLayoutBinding.inflate(LayoutInflater.from(new ContextThemeWrapper(this, R.style.DialogTheme)));
         dialog.setContentView(mBinding.getRoot());
-
-
-        loginViewModel = ViewModelProviders.of(LoginActivity.this).get(LoginViewModel.class);
-        loginViewModel.setLoginEvent(loginEvent);
-        mBinding.setModel(loginViewModel);
+        mBinding.setModel(model);
 
         mBinding.btnDialogSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginViewModel.signIn(view);
+                model.signIn(view);
             }
         });
-
         mBinding.btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
-
         mBinding.txtSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -163,12 +162,10 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
                 dialog.dismiss();
             }
         });
-
-
         mBinding.txtForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this,ForgotPasswordActivity.class));
+                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
             }
         });
     }
@@ -181,11 +178,14 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
         switch ((int) storage.read(Constants.LOGIN_TYPE, DataStorage.INTEGER)) {
             case 1:
                 GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-                Toast.makeText(this, "Login By Google : " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Login By Google : " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
+                   model.validateAuthUserLogin(account.getEmail(), account.getDisplayName(), Constants.LOGIN_GOOGLE);
                 break;
             case 2:
                 FirebaseUser user = mAuth.getCurrentUser();
-                Toast.makeText(this, "Login By Facebook : " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                model.validateAuthUserLogin(user.getEmail(), user.getDisplayName(), Constants.LOGIN_FACEBOOK);
+
+                //Toast.makeText(this, "Login By Facebook : " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                 break;
 
             default:
@@ -213,10 +213,10 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
                 StringBuffer errorBuffer = new StringBuffer();
                 for (Error error : response.getErrors()) {
 
-                    if (error.getCode().equalsIgnoreCase(LOGIN_EROR_CODE.REG001.toString())) {
+                    if (error.getCode().equalsIgnoreCase(LOGIN_ERROR_CODE.REG001.toString())) {
                         mBinding.txtUserId.setErrorEnabled(true);
                         mBinding.txtUserId.setError(error.getMessage());
-                    } else if (error.getCode().equalsIgnoreCase(LOGIN_EROR_CODE.REG002.toString())) {
+                    } else if (error.getCode().equalsIgnoreCase(LOGIN_ERROR_CODE.REG002.toString())) {
                         mBinding.txtPassword.setErrorEnabled(true);
                         mBinding.txtPassword.setError(error.getMessage());
                     } else {
@@ -257,7 +257,7 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
         }
 
         public void signInWithFacebook(View view) {
-            mFacbookLoginButton.performClick();
+            mFacebookLoginButton.performClick();
         }
 
         public void signIn(View view) {
@@ -269,6 +269,8 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
         }
     }
 
+
+    // validate google and facebook auth user
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -279,26 +281,46 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_GOOGLE);
+                if (null != account.getEmail()) {
+                    model.validateAuthUserLogin(account.getEmail(), account.getDisplayName(), Constants.LOGIN_GOOGLE);
+                } else {
+                    Toast.makeText(this, getString(R.string.google_login_fail_msg), Toast.LENGTH_SHORT).show();
+                }
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Log.w(Constants.TAG, "Google sign in failed", e);
+                Log.w(Constants.TAG, getString(R.string.google_login_fail_msg), e);
+                Toast.makeText(this, getString(R.string.google_login_fail_msg), Toast.LENGTH_SHORT).show();
                 // ...
             }
         } else if (FacebookSdk.isFacebookRequestCode(requestCode)) {
             //login by FaceBook
-            storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_GOOGLE);
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
         } else if (requestCode == Constants.SIGN_UP) {
 
             if (null != data) {
-                String userID = data.getStringExtra("user_id");
-                if (null != userID && !TextUtils.isEmpty(userID)) {
-                    dialog.show();
-                    loginViewModel.getUserIdEmail().setValue(userID);
-                    mBinding.txtPassword.setFocusable(true);
-                    mBinding.txtPassword.requestFocus();
+
+                if (data.getBooleanExtra(getString(R.string.is_google_login_key), Boolean.FALSE)) {
+                    //TODO
+                    storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_GOOGLE);
+                    User user = data.getParcelableExtra(getString(R.string.user_obj_key));
+                    Toast.makeText(this, user.getUserName(), Toast.LENGTH_SHORT).show();
+
+                } else if (data.getBooleanExtra(getString(R.string.is_facebook_login_key), Boolean.FALSE)) {
+                    //TODO
+                    storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_FACEBOOK);
+                    User user = data.getParcelableExtra(getString(R.string.user_obj_key));
+                    Toast.makeText(this, user.getUserName(), Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    String userID = data.getStringExtra(getString(R.string.user_id_key));
+                    if (null != userID && !TextUtils.isEmpty(userID)) {
+                        dialog.show();
+                        model.getUserIdEmail().setValue(userID);
+                        mBinding.txtPassword.setFocusable(true);
+                        mBinding.txtPassword.requestFocus();
+                    }
                 }
             }
 
@@ -306,10 +328,74 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent {
     }
 
 
-    public static enum LOGIN_EROR_CODE {
+    @Override
+    public void onValidateAuthStart() {
+        ViewUtil.enableDisableView(loginBinding.getRoot(), false);
+        setVisibilityProgressbar(true);
+    }
+
+    @Override
+    public void onValidateAuthSuccess(LoginResponse response, int loginCode) {
+        ViewUtil.enableDisableView(loginBinding.getRoot(), true);
+        setVisibilityProgressbar(false);
+
+        if (null != response && response.isStatus() && null != response.getUser()) {
+            if (loginCode == Constants.LOGIN_GOOGLE) {
+                storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_GOOGLE);
+            } else if (loginCode == Constants.LOGIN_FACEBOOK) {
+                storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_FACEBOOK);
+            }
+
+            Toast.makeText(this, response.getUser().getUserName(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+    @Override
+    public void onUserNotRegistered(LoginResponse response, String email, String name, int loginCode) {
+        ViewUtil.enableDisableView(loginBinding.getRoot(), true);
+        setVisibilityProgressbar(false);
+
+        if (!response.isStatus()) {
+            Intent intent = new Intent(this, TakeUserIdActivity.class);
+            User user = new User();
+            user.setEmail(email);
+            user.setUserName(name);
+            intent.putExtra(getString(R.string.user_obj_key), user);
+            if (loginCode == Constants.LOGIN_FACEBOOK) {
+                 user.setGoogleLogin(false);
+                 user.setFacebookLogin(true);
+            } else if (loginCode == Constants.LOGIN_GOOGLE) {
+                user.setGoogleLogin(true);
+                user.setFacebookLogin(false);
+            }
+            startActivityForResult(intent, Constants.SIGN_UP);
+        }
+
+    }
+
+    @Override
+    public void onValidateAuthFail(LoginResponse response) {
+        ViewUtil.enableDisableView(loginBinding.getRoot(), true);
+        setVisibilityProgressbar(false);
+
+    }
+
+    public static enum LOGIN_ERROR_CODE {
         REG001,//user id or email
         REG002,// password
-        REG012// error
+        REG012,// error
+
+        LOGIN001 //email null
+    }
+
+    public void setVisibilityProgressbar(boolean b) {
+        if (b) {
+            loginBinding.progressBar.setVisibility(View.VISIBLE);
+        } else {
+            loginBinding.progressBar.setVisibility(View.GONE);
+        }
     }
 
 }

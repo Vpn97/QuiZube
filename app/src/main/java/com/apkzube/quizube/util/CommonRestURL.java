@@ -11,6 +11,7 @@ public class  CommonRestURL {
     public static final String LOGIN_USER_URL = "registration/LoginRequest.php";
     public static final String SEND_OTP_URL = "registration/SendOTP.php";
     public static final String UPDATE_PASSWORD_URL = "registration/UpdatePassword.php";
+    public static final String VALIDATE_AUTH_LOGIN_URL = "registration/ValidateAuthUserLogin.php";
 
 
 

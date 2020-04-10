@@ -16,7 +16,7 @@
     <string name="email_id">EMAIL ID</string>
     <string name="password">PASSWORD</string>
     <string name="confirm_password">CONFIRM PASSWORD</string>
-    <string name="user_id_already">user id  already exist</string>
+    <string name="user_id_already">not available. please choose another</string>
     <string name="not_valid_user_id">not valid</string>
     <string name="enter_email_msg">enter valid email id</string>
     <string name="pasword_dosenot_match">password doesn\'t match</string>
@@ -54,6 +54,15 @@
     <string name="send_email_response_obj">send_email_response_obj</string>
     <string name="from_sign_up">from_sign_up</string>
     <string name="email_id_key">email_id_key</string>
+    <string name="take_user_id">Take user id</string>
+    <string name="set_user_id">set user id of your QuiZube acoount</string>
+    <string name="looks_good">Looks good</string>
+    <string name="is_google_login_key">is_google_login_key</string>
+    <string name="is_facebook_login_key">is_facebook_login_key</string>
+    <string name="user_obj_key">user_obj_key</string>
+    <string name="apkZube">apkZube</string>
+    <string name="google_login_fail_msg">Google sign in failed</string>
+    <string name="user_id_key">user_id_key</string>
 
 
 </resources>
