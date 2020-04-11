@@ -63,6 +63,7 @@
     <string name="apkZube">apkZube</string>
     <string name="google_login_fail_msg">Google sign in failed</string>
     <string name="user_id_key">user_id_key</string>
+    <string name="no_user_login">No user login.</string>
 
 
 </resources>

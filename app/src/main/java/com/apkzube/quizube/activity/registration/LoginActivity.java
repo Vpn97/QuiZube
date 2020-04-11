@@ -49,6 +49,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 
+import java.util.Objects;
+
 
 public class LoginActivity extends AppCompatActivity implements OnLoginEvent, OnValidateAuthEvent {
 
@@ -107,18 +109,15 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
 
                 AuthCredential credential = FacebookAuthProvider.getCredential(loginResult.getAccessToken().getToken());
                 mAuth.signInWithCredential(credential)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    model.validateAuthUserLogin(user.getEmail(), user.getDisplayName(), Constants.LOGIN_FACEBOOK);
-                                    //Toast.makeText(LoginActivity.this, "Login By FaceBook " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Toast.makeText(LoginActivity.this, "Authentication failed Facebook.", Toast.LENGTH_SHORT).show();
-                                }
+                        .addOnCompleteListener(LoginActivity.this, task -> {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                model.validateAuthUserLogin(Objects.requireNonNull(user).getEmail(), user.getDisplayName(), Constants.LOGIN_FACEBOOK);
+                                //Toast.makeText(LoginActivity.this, "Login By FaceBook " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Toast.makeText(LoginActivity.this, "Authentication failed Facebook.", Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -143,31 +142,13 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
         dialog.setContentView(mBinding.getRoot());
         mBinding.setModel(model);
 
-        mBinding.btnDialogSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                model.signIn(view);
-            }
+        mBinding.btnDialogSignIn.setOnClickListener(view -> model.signIn(view));
+        mBinding.btnClose.setOnClickListener(view -> dialog.dismiss());
+        mBinding.txtSignUp.setOnClickListener(view -> {
+            loginBinding.btnSignUp.performClick();
+            dialog.dismiss();
         });
-        mBinding.btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-        mBinding.txtSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loginBinding.btnSignUp.performClick();
-                dialog.dismiss();
-            }
-        });
-        mBinding.txtForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-            }
-        });
+        mBinding.txtForgotPassword.setOnClickListener(view -> startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class)));
     }
 
 
@@ -177,19 +158,37 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
         //Checked user sign in or not
         switch ((int) storage.read(Constants.LOGIN_TYPE, DataStorage.INTEGER)) {
             case 1:
+                //google login
                 GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
                 //Toast.makeText(this, "Login By Google : " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
-                   model.validateAuthUserLogin(account.getEmail(), account.getDisplayName(), Constants.LOGIN_GOOGLE);
+                if (account != null) {
+                    model.validateAuthUserLogin(account.getEmail(), account.getDisplayName(), Constants.LOGIN_GOOGLE);
+                }
                 break;
             case 2:
+                //facebook login
                 FirebaseUser user = mAuth.getCurrentUser();
-                model.validateAuthUserLogin(user.getEmail(), user.getDisplayName(), Constants.LOGIN_FACEBOOK);
-
+                if (user != null) {
+                    model.validateAuthUserLogin(user.getEmail(), user.getDisplayName(), Constants.LOGIN_FACEBOOK);
+                }
                 //Toast.makeText(this, "Login By Facebook : " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                 break;
 
+            case 3:
+                //sign in by email or user id
+                try {
+                    User mUser = new Gson().
+                            fromJson(String.valueOf(storage.read(getString(R.string.user_obj_key), DataStorage.STRING))
+                                    , User.class);
+                    Toast.makeText(this, mUser.getUserName(), Toast.LENGTH_SHORT).show();
+
+                } catch (Exception e) {
+                    Toast.makeText(this, getString(R.string.no_user_login), Toast.LENGTH_SHORT).show();
+                }
+
+
             default:
-                Toast.makeText(this, "NO User Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.no_user_login), Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -198,6 +197,7 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
     public void onLoginSuccess(LoginResponse response) {
         Log.d(Constants.TAG, "Login Success: " + new Gson().toJson(response));
         if (null != response && null != response.getUser() && response.isStatus()) {
+            storage.write(getString(R.string.user_obj_key), new Gson().toJson(response.getUser()));
             Toast.makeText(this, response.getUser().getUserName(), Toast.LENGTH_SHORT).show();
         } else {
             mBinding.txtError.setVisibility(View.VISIBLE);
@@ -364,8 +364,8 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
             user.setUserName(name);
             intent.putExtra(getString(R.string.user_obj_key), user);
             if (loginCode == Constants.LOGIN_FACEBOOK) {
-                 user.setGoogleLogin(false);
-                 user.setFacebookLogin(true);
+                user.setGoogleLogin(false);
+                user.setFacebookLogin(true);
             } else if (loginCode == Constants.LOGIN_GOOGLE) {
                 user.setGoogleLogin(true);
                 user.setFacebookLogin(false);
