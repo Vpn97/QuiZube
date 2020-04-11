@@ -63,6 +63,9 @@ public class TakeUserIdActivity extends AppCompatActivity implements OnRegistrat
         }
         model.setOnRegistrationEvent(this);
         mBinding.setModel(model);
+        mBinding.txtBackToLogin.setOnClickListener(view->{
+            onBackPressed();
+        });
     }
 
     private void setEvent() {

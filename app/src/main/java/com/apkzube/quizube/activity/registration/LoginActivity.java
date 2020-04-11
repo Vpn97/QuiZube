@@ -117,20 +117,20 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
                                 //Toast.makeText(LoginActivity.this, "Login By FaceBook " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                             } else {
                                 // If sign in fails, display a message to the user.
-                                Toast.makeText(LoginActivity.this, "Authentication failed Facebook.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, getString(R.string.facrbook_auth_fail), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
 
             @Override
             public void onCancel() {
-                Toast.makeText(LoginActivity.this, "Facebook Login Canceled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.facrbook_auth_canceled), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d(Constants.TAG, "onError: " + error.getMessage());
-                Toast.makeText(LoginActivity.this, "Facebook Login Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.facrbook_auth_fail), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -155,8 +155,10 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
     @Override
     protected void onStart() {
         super.onStart();
+
         //Checked user sign in or not
-        switch ((int) storage.read(Constants.LOGIN_TYPE, DataStorage.INTEGER)) {
+        /*
+ switch ((int) storage.read(Constants.LOGIN_TYPE, DataStorage.INTEGER)) {
             case 1:
                 //google login
                 GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -190,7 +192,20 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
             default:
                 Toast.makeText(this, getString(R.string.no_user_login), Toast.LENGTH_SHORT).show();
 
+        }*/
+
+        try {
+            User mUser = new Gson().fromJson(String.valueOf(storage.read(getString(R.string.user_obj_key), DataStorage.STRING)), User.class);
+
+            if (null != mUser) {
+                startDashboardIntent(mUser);
+            } else {
+                Toast.makeText(this, getString(R.string.no_user_login), Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, getString(R.string.no_user_login), Toast.LENGTH_SHORT).show();
         }
+
     }
 
     @Override
@@ -198,7 +213,8 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
         Log.d(Constants.TAG, "Login Success: " + new Gson().toJson(response));
         if (null != response && null != response.getUser() && response.isStatus()) {
             storage.write(getString(R.string.user_obj_key), new Gson().toJson(response.getUser()));
-            Toast.makeText(this, response.getUser().getUserName(), Toast.LENGTH_SHORT).show();
+            storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_SIGN_IN);
+            startDashboardIntent(response.getUser());
         } else {
             mBinding.txtError.setVisibility(View.VISIBLE);
             mBinding.txtError.setText(getString(R.string.server_error));
@@ -304,13 +320,19 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
                     //TODO
                     storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_GOOGLE);
                     User user = data.getParcelableExtra(getString(R.string.user_obj_key));
-                    Toast.makeText(this, user.getUserName(), Toast.LENGTH_SHORT).show();
+                    if(null!=user){
+                        storage.write(getString(R.string.user_obj_key), new Gson().toJson(user));
+                    }
+                    startDashboardIntent(user);
 
                 } else if (data.getBooleanExtra(getString(R.string.is_facebook_login_key), Boolean.FALSE)) {
                     //TODO
                     storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_FACEBOOK);
                     User user = data.getParcelableExtra(getString(R.string.user_obj_key));
-                    Toast.makeText(this, user.getUserName(), Toast.LENGTH_SHORT).show();
+                    if(null!=user){
+                        storage.write(getString(R.string.user_obj_key), new Gson().toJson(user));
+                        startDashboardIntent(user);
+                    }
 
                 } else {
 
@@ -345,8 +367,8 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
             } else if (loginCode == Constants.LOGIN_FACEBOOK) {
                 storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_FACEBOOK);
             }
-
-            Toast.makeText(this, response.getUser().getUserName(), Toast.LENGTH_SHORT).show();
+            storage.write(getString(R.string.user_obj_key), new Gson().toJson(response.getUser()));
+            startDashboardIntent(response.getUser());
         }
 
     }
@@ -396,6 +418,10 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
         } else {
             loginBinding.progressBar.setVisibility(View.GONE);
         }
+    }
+
+    public void startDashboardIntent(User user){
+        //TODO create main dashboard intent
     }
 
 }
