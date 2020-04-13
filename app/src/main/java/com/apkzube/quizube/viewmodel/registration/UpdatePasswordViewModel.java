@@ -13,6 +13,7 @@ import com.apkzube.quizube.activity.registration.UpdatePasswordActivity;
 import com.apkzube.quizube.events.registration.OnPasswordUpdateEvent;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
 import com.apkzube.quizube.response.registration.UpdatePasswordResponse;
+import com.apkzube.quizube.response.registration.VerifyOTPResponse;
 import com.apkzube.quizube.service.registration.RegistrationService;
 import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
 import com.apkzube.quizube.util.Error;
@@ -30,7 +31,7 @@ public class UpdatePasswordViewModel extends AndroidViewModel {
     private MutableLiveData<String> password=new MutableLiveData<>();
     private MutableLiveData<String> confirmPassword=new MutableLiveData<>();
 
-    private SendOTPResponse sendOTPResponse;
+    private VerifyOTPResponse verifyOTPResponse;
     private OnPasswordUpdateEvent passwordUpdateEvent;
 
 
@@ -44,9 +45,9 @@ public class UpdatePasswordViewModel extends AndroidViewModel {
         passwordUpdateEvent.onUpdatePasswordStart();
         ArrayList<Error> errors=validateInput();
         if(errors.isEmpty()){
-            if(null!=sendOTPResponse.getEmail()){
+            if(null!=verifyOTPResponse.getEmail()){
                 HashMap<String,String> mQueryMap=new HashMap<>();
-                mQueryMap.put("email",sendOTPResponse.getEmail());
+                mQueryMap.put("email",verifyOTPResponse.getEmail());
                 mQueryMap.put("password",password.getValue());
                 RegistrationService service= RegistrationServiceImpl.getService();
 
@@ -101,16 +102,16 @@ public class UpdatePasswordViewModel extends AndroidViewModel {
         }
 
         if (null == confirmPassword.getValue() || TextUtils.isEmpty(confirmPassword.getValue()) ) {
-            errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+            errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.password_does_not_match), "REG"));
         }else if(!password.getValue().equals(confirmPassword.getValue())){
-            errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+            errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.password_does_not_match), "REG"));
         }
 
 
         if (null != password.getValue() && (password.getValue().length() > 6 || password.getValue().length() < 20)) {
 
             if (null != confirmPassword.getValue() &&  !password.getValue().equals(confirmPassword.getValue())) {
-                errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+                errors.add(new Error(UpdatePasswordActivity.ERROR_CODE.PASS005.toString(), application.getString(R.string.password_does_not_match), "REG"));
             }
 
         } else {
@@ -146,12 +147,12 @@ public class UpdatePasswordViewModel extends AndroidViewModel {
         this.confirmPassword = confirmPassword;
     }
 
-    public SendOTPResponse getSendOTPResponse() {
-        return sendOTPResponse;
+    public VerifyOTPResponse getVerifyOTPResponse() {
+        return verifyOTPResponse;
     }
 
-    public void setSendOTPResponse(SendOTPResponse sendOTPResponse) {
-        this.sendOTPResponse = sendOTPResponse;
+    public void setVerifyOTPResponse(VerifyOTPResponse verifyOTPResponse) {
+        this.verifyOTPResponse = verifyOTPResponse;
     }
 
     public OnPasswordUpdateEvent getPasswordUpdateEvent() {

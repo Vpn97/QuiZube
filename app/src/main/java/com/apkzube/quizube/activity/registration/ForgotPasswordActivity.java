@@ -1,5 +1,6 @@
 package com.apkzube.quizube.activity.registration;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -71,16 +72,27 @@ public class ForgotPasswordActivity extends AppCompatActivity implements OnSendO
 
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==Constants.FORGOT_PASSWORD && resultCode==RESULT_OK){
+            if(null!=data){
+                setResult(RESULT_OK,data);
+                finish();
+            }
+        }
+    }
+
+    @Override
     public void onOTPReceiveSuccess(SendOTPResponse response) {
         mBinding.progressBar.setVisibility(View.GONE);
         ViewUtil.enableDisableView(mBinding.getRoot(),true);
 
         if(response.isStatus()){
             //Toast.makeText(this, response.getUid()+" : "+response.getOtp()+" : "+response.getEmail(), Toast.LENGTH_SHORT).show();
-            Intent intent=new Intent(this,VerifyEmailActivity.class);
+            Intent intent=new Intent(this,VerifyEmailActivity.class)
+                    .putExtra(getString(R.string.is_password_update_key),Boolean.TRUE);
             intent.putExtra(getString(R.string.send_email_response_obj),response);
-            startActivity(intent);
-            finish();
+            startActivityForResult(intent,Constants.FORGOT_PASSWORD);
         }
 
     }

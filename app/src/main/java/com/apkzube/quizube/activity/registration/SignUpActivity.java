@@ -150,7 +150,7 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
             public void onChanged(String password) {
                 if (!password.equals(signUpBinding.txtPassword.getEditText().getText().toString())) {
                     signUpBinding.txtConfPassword.setErrorEnabled(true);
-                    signUpBinding.txtConfPassword.setError(getString(R.string.pasword_dosenot_match));
+                    signUpBinding.txtConfPassword.setError(getString(R.string.password_does_not_match));
                 } else {
                     signUpBinding.txtConfPassword.setErrorEnabled(false);
                     signUpBinding.txtConfPassword.setError("");
@@ -166,7 +166,7 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
         if (response.isStatus()) {
 
             startActivityForResult(new Intent(this,VerifyEmailActivity.class)
-                    .putExtra(getString(R.string.from_sign_up),true)
+                    .putExtra(getString(R.string.from_sign_up_key),true)
                     .putExtra(getString(R.string.email_id_key),model.getEmail().getValue()),VERIFY_EMAIL_REQUEST_CODE);
 
 
@@ -251,11 +251,10 @@ public class SignUpActivity extends AppCompatActivity implements OnRegistrationE
 
         if(requestCode==VERIFY_EMAIL_REQUEST_CODE && resultCode==RESULT_OK){
             Intent intent=new Intent();
-            intent.putExtra("user_id",model.getUserId().getValue());
+            intent.putExtra(getString(R.string.user_id_key),model.getUserId().getValue());
             setResult(RESULT_OK,intent);
-            finish();
         }
-
+        finish();
     }
 
     public static enum ERROR_CODE {

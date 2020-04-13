@@ -8,9 +8,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.apkzube.quizube.activity.registration.ForgotPasswordActivity;
+import com.apkzube.quizube.activity.registration.VerifyEmailActivity;
 import com.apkzube.quizube.events.registration.OnOTPVerifyEvent;
 import com.apkzube.quizube.events.registration.OnSendOTPEvent;
+import com.apkzube.quizube.response.registration.LoginResponse;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
+import com.apkzube.quizube.response.registration.VerifyOTPResponse;
 import com.apkzube.quizube.service.registration.RegistrationService;
 import com.apkzube.quizube.service.registration.impl.RegistrationServiceImpl;
 import com.apkzube.quizube.util.Error;
@@ -32,6 +35,7 @@ public class VerifyEmailViewModel extends AndroidViewModel {
     private MutableLiveData<String> otp6=new MutableLiveData<>();
     private MutableLiveData<String> count=new MutableLiveData<>();
     private SendOTPResponse otpResponse;
+    private Boolean isFromUpdatePassword;
 
     private Application application;
 
@@ -48,19 +52,57 @@ public class VerifyEmailViewModel extends AndroidViewModel {
     public void verifyOTP(View view){
         onOTPVerifyEvent.onOTPVerifyStart();
 
-        if(null!=otpResponse){
-            String inputOTP=String.valueOf(otp1.getValue()+otp2.getValue()+otp3.getValue()+otp4.getValue()+otp5.getValue()+otp6.getValue());
-            if(otpResponse.isExpired()){
-                //otp expired
-                onOTPVerifyEvent.onOTPExpired(otpResponse);
-            }else {
-                if (otpResponse.getOtp().equalsIgnoreCase(inputOTP)) {
-                    onOTPVerifyEvent.onOTPVerifySuccess(otpResponse);
-                } else {
-                    onOTPVerifyEvent.onOTPNotMatch(otpResponse);
+
+        RegistrationService service=RegistrationServiceImpl.getService();
+
+        HashMap<String,String> mQueryMap=new HashMap<>();
+
+        mQueryMap.put("email",otpResponse.getEmail());
+        mQueryMap.put("otp",getFullOTP());
+        mQueryMap.put("otp_id", String.valueOf(otpResponse.getOtpId()));
+        if(isFromUpdatePassword){
+            mQueryMap.put("is_password_update", "1");
+        }else {
+            mQueryMap.put("is_password_update", "0");
+        }
+
+        service.verifyOTP(mQueryMap).enqueue(new Callback<VerifyOTPResponse>() {
+            @Override
+            public void onResponse(Call<VerifyOTPResponse> call, Response<VerifyOTPResponse> response) {
+
+
+                if(null!=response.body()){
+                    if(response.body().isStatus() && !response.body().isExpired()){
+                        //otp verified successfully
+                        onOTPVerifyEvent.onOTPVerifySuccess(response.body());
+                    } else{
+
+                        if(response.body().isExpired()){
+                            onOTPVerifyEvent.onOTPExpired(response.body());
+                            otpResponse.setExpired(true);
+                        }else if(!response.body().getErrors().isEmpty()){
+                            if(response.body().getErrors().get(0).toIntValue()==6){
+                                onOTPVerifyEvent.onOTPNotMatch(response.body());
+                            }
+                        }else{
+                            onOTPVerifyEvent.onOTPVerifyFail(response.body());
+                        }
+
+                    }
                 }
             }
-        }
+
+            @Override
+            public void onFailure(Call<VerifyOTPResponse> call, Throwable t) {
+                VerifyOTPResponse mResponse=new VerifyOTPResponse();
+                ArrayList<Error> errors=new ArrayList<>();
+                mResponse.setStatus(false);
+                Error mError = new Error(VerifyEmailActivity.ERROR_CODE.OTP007.toString(), t.getMessage(), "REG");
+                errors.add(mError);
+                mResponse.setErrors(errors);
+                onOTPVerifyEvent.onOTPVerifyFail(mResponse);
+            }
+        });
     }
 
 
@@ -106,6 +148,14 @@ public class VerifyEmailViewModel extends AndroidViewModel {
         }
     }
 
+
+    public Boolean getFromUpdatePassword() {
+        return isFromUpdatePassword;
+    }
+
+    public void setFromUpdatePassword(Boolean fromUpdatePassword) {
+        isFromUpdatePassword = fromUpdatePassword;
+    }
 
     public MutableLiveData<String> getOtp1() {
         return otp1;
@@ -193,5 +243,10 @@ public class VerifyEmailViewModel extends AndroidViewModel {
 
     public void setCount(MutableLiveData<String> count) {
         this.count = count;
+    }
+
+
+    public String getFullOTP(){
+        return otp1.getValue()+otp2.getValue()+otp3.getValue()+otp4.getValue()+otp5.getValue()+otp6.getValue();
     }
 }

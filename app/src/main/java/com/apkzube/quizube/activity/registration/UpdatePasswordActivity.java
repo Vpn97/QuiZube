@@ -1,6 +1,5 @@
 package com.apkzube.quizube.activity.registration;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -9,21 +8,17 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivityUpdatePasswordBinding;
 import com.apkzube.quizube.events.registration.OnPasswordUpdateEvent;
-import com.apkzube.quizube.response.registration.SendOTPResponse;
 import com.apkzube.quizube.response.registration.UpdatePasswordResponse;
-import com.apkzube.quizube.util.Constants;
+import com.apkzube.quizube.response.registration.VerifyOTPResponse;
 import com.apkzube.quizube.util.Error;
 import com.apkzube.quizube.viewmodel.registration.UpdatePasswordViewModel;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 
 public class UpdatePasswordActivity extends AppCompatActivity implements OnPasswordUpdateEvent {
 
@@ -49,10 +44,12 @@ public class UpdatePasswordActivity extends AppCompatActivity implements OnPassw
         model.setPasswordUpdateEvent(this);
         Intent intent = getIntent();
         if (null != intent) {
-            SendOTPResponse otpResponse = intent.getParcelableExtra(getString(R.string.send_email_response_obj));
-            Log.d(Constants.TAG, "allocation: " + new Gson().toJson(otpResponse));
-            if (null != otpResponse && null != otpResponse.getOtp()) {
-                model.setSendOTPResponse(otpResponse);/**/
+            VerifyOTPResponse verifyOTPResponse = intent.getParcelableExtra(getString(R.string.verify_otp_response_obj));
+            if (null != verifyOTPResponse && verifyOTPResponse.getEmail() !=null ) {
+                model.setVerifyOTPResponse(verifyOTPResponse);/**/
+            }else{
+                Toast.makeText(this, getString(R.string.otp_expired), Toast.LENGTH_SHORT).show();
+                finish();
             }
         }
 
@@ -95,7 +92,7 @@ public class UpdatePasswordActivity extends AppCompatActivity implements OnPassw
             public void onChanged(String password) {
                 if (!password.equals(mBinding.txtPassword.getEditText().getText().toString())) {
                     mBinding.txtConfirmPassword.setErrorEnabled(true);
-                    mBinding.txtConfirmPassword.setError(getString(R.string.pasword_dosenot_match));
+                    mBinding.txtConfirmPassword.setError(getString(R.string.password_does_not_match));
                 } else {
                     mBinding.txtConfirmPassword.setErrorEnabled(false);
                     mBinding.txtConfirmPassword.setError("");
@@ -114,7 +111,10 @@ public class UpdatePasswordActivity extends AppCompatActivity implements OnPassw
         setVisibilityProgressbar(false);
 
         if (response.isStatus()) {
-            Toast.makeText(this, "Password updated Successful", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.password_update_successfully), Toast.LENGTH_SHORT).show();
+            Intent intent=new Intent();
+            intent.putExtra(getString(R.string.user_id_key),response.getEmail());
+            setResult(RESULT_OK,intent);
             finish();
         }else{
             setSnackBar(getString(R.string.server_error), ERROR_CODE.PASS002.toString());

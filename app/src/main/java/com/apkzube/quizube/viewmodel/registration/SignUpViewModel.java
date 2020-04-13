@@ -128,16 +128,16 @@ public class SignUpViewModel extends AndroidViewModel {
         }
 
         if (null == userMst.getConfPassword() || TextUtils.isEmpty(userMst.getConfPassword())) {
-            errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.password_does_not_match), "REG"));
         }else if(!userMst.getPassword().equals(userMst.getConfPassword())){
-            errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+            errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.password_does_not_match), "REG"));
         }
 
 
         if (null != userMst.getPassword() && (userMst.getPassword().length() > 6 || userMst.getPassword().length() < 20)) {
 
             if (null != userMst.getConfPassword() && !TextUtils.isEmpty(userMst.getConfPassword()) && !userMst.getPassword().equals(userMst.getConfPassword())) {
-                errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.pasword_dosenot_match), "REG"));
+                errors.add(new Error(SignUpActivity.ERROR_CODE.REG005.toString(), application.getString(R.string.password_does_not_match), "REG"));
             }
 
         } else {
@@ -213,4 +213,6 @@ public class SignUpViewModel extends AndroidViewModel {
     public void setOnRegistrationEvent(OnRegistrationEvent onRegistrationEvent) {
         this.onRegistrationEvent = onRegistrationEvent;
     }
+
+
 }

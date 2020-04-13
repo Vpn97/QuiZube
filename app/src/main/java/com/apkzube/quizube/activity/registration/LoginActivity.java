@@ -1,6 +1,5 @@
 package com.apkzube.quizube.activity.registration;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -40,10 +39,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -117,20 +114,20 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
                                 //Toast.makeText(LoginActivity.this, "Login By FaceBook " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
                             } else {
                                 // If sign in fails, display a message to the user.
-                                Toast.makeText(LoginActivity.this, getString(R.string.facrbook_auth_fail), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, getString(R.string.facebook_auth_fail), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
 
             @Override
             public void onCancel() {
-                Toast.makeText(LoginActivity.this, getString(R.string.facrbook_auth_canceled), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.facebook_auth_canceled), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d(Constants.TAG, "onError: " + error.getMessage());
-                Toast.makeText(LoginActivity.this, getString(R.string.facrbook_auth_fail), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, getString(R.string.facebook_auth_fail), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -148,7 +145,11 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
             loginBinding.btnSignUp.performClick();
             dialog.dismiss();
         });
-        mBinding.txtForgotPassword.setOnClickListener(view -> startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class)));
+        mBinding.txtForgotPassword.setOnClickListener(view -> {
+            Intent intent= new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+             startActivityForResult(intent,Constants.FORGOT_PASSWORD);
+        }
+        );
     }
 
 
@@ -210,12 +211,27 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
 
     @Override
     public void onLoginSuccess(LoginResponse response) {
-        Log.d(Constants.TAG, "Login Success: " + new Gson().toJson(response));
+        //Log.d(Constants.TAG, "Login Success: " + new Gson().toJson(response));
         if (null != response && null != response.getUser() && response.isStatus()) {
-            storage.write(getString(R.string.user_obj_key), new Gson().toJson(response.getUser()));
-            storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_SIGN_IN);
-            startDashboardIntent(response.getUser());
+
+            if(response.getUser().isVerifyEmail() || response.getUser().isVerifyPhone()){
+                //verified user
+                setVisibilityProgressbar(false);
+                storage.write(Constants.LOGIN_TYPE, Constants.LOGIN_SIGN_IN);
+                storage.write(getString(R.string.user_obj_key), new Gson().toJson(response.getUser()));
+                startDashboardIntent(response.getUser());
+            }else{
+                // not verified user send to verify email activity
+                Intent intent=new Intent(this,VerifyEmailActivity.class);
+                intent.putExtra(getString(R.string.user_obj_key),response.getUser());
+                intent.putExtra(getString(R.string.is_for_verify_email),Boolean.TRUE);
+                setVisibilityProgressbar(true);
+                startActivityForResult(intent,Constants.VERIFY_EMAIL);
+
+            }
+
         } else {
+            setVisibilityProgressbar(false);
             mBinding.txtError.setVisibility(View.VISIBLE);
             mBinding.txtError.setText(getString(R.string.server_error));
         }
@@ -312,7 +328,7 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
             //login by FaceBook
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
 
-        } else if (requestCode == Constants.SIGN_UP) {
+        } else if ((requestCode == Constants.SIGN_UP || requestCode==Constants.FORGOT_PASSWORD) && resultCode==RESULT_OK) {
 
             if (null != data) {
 
@@ -344,6 +360,16 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
                         mBinding.txtPassword.requestFocus();
                     }
                 }
+            }
+
+        }else if(requestCode == Constants.VERIFY_EMAIL  && resultCode==RESULT_OK) {
+
+            if(null!=data){
+               User user=data.getParcelableExtra(getString(R.string.user_obj_key));
+               if(null!=user){
+                   LoginResponse response=new LoginResponse(true,null,user);
+                   this.onLoginSuccess(response);
+               }
             }
 
         }
@@ -422,6 +448,7 @@ public class LoginActivity extends AppCompatActivity implements OnLoginEvent, On
 
     public void startDashboardIntent(User user){
         //TODO create main dashboard intent
+        Toast.makeText(this, user.getUserName(), Toast.LENGTH_SHORT).show();
     }
 
 }

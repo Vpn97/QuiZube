@@ -2,7 +2,7 @@
     <string name="app_name">QuiZube</string>
     <string name="sign_with_google">Sign-In with Google</string>
     <string name="sign_with_facebook">Sign-in with Facebook</string>
-    <string name="loing_with">OR WITH EMAIL</string>
+    <string name="login_with">OR WITH EMAIL</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_in">Sign in</string>
     <string name="quizube">Q  u i Z u b e</string>
@@ -19,7 +19,7 @@
     <string name="user_id_already">not available. please choose another</string>
     <string name="not_valid_user_id">not valid</string>
     <string name="enter_email_msg">enter valid email id</string>
-    <string name="pasword_dosenot_match">password doesn\'t match</string>
+    <string name="password_does_not_match">password doesn\'t match</string>
     <string name="server_error">server error please try again later</string>
     <string name="user_id_cannot_be_empty">enter valid user id</string>
     <string name="enter_valid_user_name">enter valid name</string>
@@ -39,20 +39,20 @@
     <string name="send">Send</string>
     <string name="forgot_password_msg_otp">We will send email you an\none time password to reset account password</string>
     <string name="back_to_login">Back to login</string>
-    <string name="inser_email">enter email id</string>
+    <string name="insert_email">enter email id</string>
     <string name="re_try">RETRY</string>
     <string name="confirm">Confirm</string>
     <string name="verify_email">Verify your email</string>
     <string name="verify_email_msg">Enter the verification code\njust send you on : </string>
     <string name="resend_email">didn\'t receive email?</string>
     <string name="resend">Resend</string>
-    <string name="otp_verify_sucessfully">OTP Verified Successfully</string>
+    <string name="otp_verify_successfully">OTP Verified Successfully</string>
     <string name="otp_does_not_match">OTP does not match</string>
     <string name="otp_expired">OTP Expired</string>
     <string name="update_password">Update password</string>
     <string name="update">Update</string>
     <string name="send_email_response_obj">send_email_response_obj</string>
-    <string name="from_sign_up">from_sign_up</string>
+    <string name="from_sign_up_key">from_sign_up</string>
     <string name="email_id_key">email_id_key</string>
     <string name="take_user_id">Take user id</string>
     <string name="set_user_id">set user id of your QuiZube acoount</string>
@@ -64,8 +64,12 @@
     <string name="google_login_fail_msg">Google sign in failed</string>
     <string name="user_id_key">user_id_key</string>
     <string name="no_user_login">No user login.</string>
-    <string name="facrbook_auth_fail">Authentication failed Facebook.</string>
-    <string name="facrbook_auth_canceled">Facebook Login Canceled</string>
+    <string name="facebook_auth_fail">Authentication failed Facebook.</string>
+    <string name="facebook_auth_canceled">Facebook Login Canceled</string>
+    <string name="verify_otp_response_obj">verify_otp_response_obj</string>
+    <string name="is_password_update_key">is_password_update_key</string>
+    <string name="is_for_verify_email">is_for_verify_email</string>
+    <string name="password_update_successfully">Password updated Successfully</string>
 
 
 </resources>

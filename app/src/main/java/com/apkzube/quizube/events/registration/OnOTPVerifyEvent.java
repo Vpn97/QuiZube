@@ -1,13 +1,13 @@
 package com.apkzube.quizube.events.registration;
 
-import com.apkzube.quizube.response.registration.SendOTPResponse;
+import com.apkzube.quizube.response.registration.VerifyOTPResponse;
 
 public interface OnOTPVerifyEvent {
 
-    public void onOTPVerifySuccess(SendOTPResponse sendOTPResponse);
-    public void onOTPVerifyFail(SendOTPResponse sendOTPResponse);
+    public void onOTPVerifySuccess(VerifyOTPResponse response);
+    public void onOTPVerifyFail(VerifyOTPResponse response);
     public void onOTPVerifyStart();
-    public void onOTPExpired(SendOTPResponse sendOTPResponse);
-    public void onOTPNotMatch(SendOTPResponse sendOTPResponse);
+    public void onOTPExpired(VerifyOTPResponse response);
+    public void onOTPNotMatch(VerifyOTPResponse response);
 
 }

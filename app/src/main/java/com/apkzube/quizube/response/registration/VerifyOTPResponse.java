@@ -3,30 +3,27 @@ package com.apkzube.quizube.response.registration;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.apkzube.quizube.model.registration.User;
 import com.apkzube.quizube.util.Error;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class SendOTPResponse implements Parcelable {
+public class VerifyOTPResponse implements Parcelable {
+
 
     @SerializedName("status")
     @Expose
     private boolean status;
 
-    @SerializedName("uid")
+    @SerializedName("user")
     @Expose
-    private String uid;
-
+    private User user;
 
     @SerializedName("email")
     @Expose
     private String email;
-
-    @SerializedName("otp")
-    @Expose
-    private String otp;
 
     @SerializedName("errors")
     @Expose
@@ -37,44 +34,33 @@ public class SendOTPResponse implements Parcelable {
     private boolean isExpired;
 
 
-    @SerializedName("opt_id")
-    @Expose
-    private int otpId;
-
-
-    public SendOTPResponse() {
+    public VerifyOTPResponse() {
     }
 
 
-    public SendOTPResponse(boolean status, String uid, String email, String otp, ArrayList<Error> errors, boolean isExpired, int otpId) {
+    public VerifyOTPResponse(boolean status, User user, String email, ArrayList<Error> errors, boolean isExpired) {
         this.status = status;
-        this.uid = uid;
+        this.user = user;
         this.email = email;
-        this.otp = otp;
         this.errors = errors;
         this.isExpired = isExpired;
-        this.otpId = otpId;
     }
 
-    protected SendOTPResponse(Parcel in) {
+    protected VerifyOTPResponse(Parcel in) {
         status = in.readByte() != 0;
-        uid = in.readString();
+        user = in.readParcelable(User.class.getClassLoader());
         email = in.readString();
-        otp = in.readString();
         errors = in.createTypedArrayList(Error.CREATOR);
         isExpired = in.readByte() != 0;
-        otpId = in.readInt();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte((byte) (status ? 1 : 0));
-        dest.writeString(uid);
+        dest.writeParcelable(user, flags);
         dest.writeString(email);
-        dest.writeString(otp);
         dest.writeTypedList(errors);
         dest.writeByte((byte) (isExpired ? 1 : 0));
-        dest.writeInt(otpId);
     }
 
     @Override
@@ -82,15 +68,15 @@ public class SendOTPResponse implements Parcelable {
         return 0;
     }
 
-    public static final Creator<SendOTPResponse> CREATOR = new Creator<SendOTPResponse>() {
+    public static final Creator<VerifyOTPResponse> CREATOR = new Creator<VerifyOTPResponse>() {
         @Override
-        public SendOTPResponse createFromParcel(Parcel in) {
-            return new SendOTPResponse(in);
+        public VerifyOTPResponse createFromParcel(Parcel in) {
+            return new VerifyOTPResponse(in);
         }
 
         @Override
-        public SendOTPResponse[] newArray(int size) {
-            return new SendOTPResponse[size];
+        public VerifyOTPResponse[] newArray(int size) {
+            return new VerifyOTPResponse[size];
         }
     };
 
@@ -102,12 +88,12 @@ public class SendOTPResponse implements Parcelable {
         this.status = status;
     }
 
-    public String getUid() {
-        return uid;
+    public User getUser() {
+        return user;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getEmail() {
@@ -116,14 +102,6 @@ public class SendOTPResponse implements Parcelable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getOtp() {
-        return otp;
-    }
-
-    public void setOtp(String otp) {
-        this.otp = otp;
     }
 
     public ArrayList<Error> getErrors() {
@@ -140,13 +118,5 @@ public class SendOTPResponse implements Parcelable {
 
     public void setExpired(boolean expired) {
         isExpired = expired;
-    }
-
-    public int getOtpId() {
-        return otpId;
-    }
-
-    public void setOtpId(int otpId) {
-        this.otpId = otpId;
     }
 }

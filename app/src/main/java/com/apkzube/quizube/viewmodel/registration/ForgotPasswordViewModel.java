@@ -83,7 +83,7 @@ public class ForgotPasswordViewModel extends AndroidViewModel {
         ArrayList<Error> errors=new ArrayList<>();
 
         if (null == email.getValue() || TextUtils.isEmpty(email.getValue())) {
-            errors.add(new Error(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP001.toString(), application.getString(R.string.inser_email), "REG"));
+            errors.add(new Error(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP001.toString(), application.getString(R.string.insert_email), "REG"));
         }else if (null!=email.getValue() && !Patterns.EMAIL_ADDRESS.matcher(email.getValue()).matches()){
             errors.add(new Error(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP004.toString(), application.getString(R.string.enter_email_msg), "REG"));
         }

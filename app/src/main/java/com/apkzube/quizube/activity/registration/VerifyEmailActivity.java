@@ -1,5 +1,6 @@
 package com.apkzube.quizube.activity.registration;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -21,7 +22,9 @@ import com.apkzube.quizube.R;
 import com.apkzube.quizube.databinding.ActivityVerifyEmailBinding;
 import com.apkzube.quizube.events.registration.OnOTPVerifyEvent;
 import com.apkzube.quizube.events.registration.OnSendOTPEvent;
+import com.apkzube.quizube.model.registration.User;
 import com.apkzube.quizube.response.registration.SendOTPResponse;
+import com.apkzube.quizube.response.registration.VerifyOTPResponse;
 import com.apkzube.quizube.util.Constants;
 import com.apkzube.quizube.util.Error;
 import com.apkzube.quizube.util.ViewUtil;
@@ -38,8 +41,9 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
     private EditText[] editTexts;
     private Snackbar snackbar;
     private CountDownTimer countDownTimer;
-
+    private boolean isForPasswordUpdate;
     private boolean isFromSignUp;
+    private boolean isForVerifyEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,11 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
 
         Intent intent = getIntent();
         if (null != intent) {
-            isFromSignUp=intent.getBooleanExtra(getString(R.string.from_sign_up),false);
+            isFromSignUp=intent.getBooleanExtra(getString(R.string.from_sign_up_key),false);
+            isForPasswordUpdate=intent.getBooleanExtra(getString(R.string.is_password_update_key),false);
+            isForVerifyEmail=intent.getBooleanExtra(getString(R.string.is_for_verify_email),false);
+            model.setFromUpdatePassword(isForPasswordUpdate);
+
             if(isFromSignUp){
                 String email=intent.getStringExtra(getString(R.string.email_id_key));
                 model.setOtpResponse(new SendOTPResponse());
@@ -69,14 +77,27 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
                 mBinding.txtResend.setEnabled(true);
                 mBinding.txtResend.setClickable(true);
                 model.sendOTP(mBinding.txtResend);
-            }else{
 
+            }else if(isForPasswordUpdate){
                 SendOTPResponse otpResponse = intent.getParcelableExtra(getString(R.string.send_email_response_obj));
                 Log.d(Constants.TAG, "allocation: " + new Gson().toJson(otpResponse));
-                if (null != otpResponse && null != otpResponse.getOtp()) {
+                if (null != otpResponse) {
                     model.setOtpResponse(otpResponse);/**/
-                    mBinding.txt.setText(getString(R.string.verify_email_msg)+otpResponse.getEmail());
+                    mBinding.txt.setText(getString(R.string.verify_email_msg)+" "+otpResponse.getEmail());
                 }
+            } else if(isForVerifyEmail){
+                User user=intent.getParcelableExtra(getString(R.string.user_obj_key));
+                if(null!=user){
+                    model.setOtpResponse(new SendOTPResponse());
+                    model.getOtpResponse().setEmail(user.getEmail());
+                    mBinding.txt.setText(getString(R.string.verify_email_msg)+" "+user.getEmail());
+                    mBinding.txtResend.setEnabled(true);
+                    mBinding.txtResend.setClickable(true);
+                    model.sendOTP(mBinding.txtResend);
+                }else{
+                    finish();
+                }
+
             }
         }
 
@@ -145,39 +166,70 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
         }
 
 
-        if(TextUtils.isEmpty(errorCode)|| errorCode.equalsIgnoreCase(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP003.toString()) || errorCode.equalsIgnoreCase(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP005.toString()) ){
+
+        if(TextUtils.isEmpty(errorCode)|| errorCode.equalsIgnoreCase(VerifyEmailActivity.ERROR_CODE.OTP008.toString()) || errorCode.equalsIgnoreCase(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP003.toString()) || errorCode.equalsIgnoreCase(ForgotPasswordActivity.SEND_OTP_ERROR_CODE.OTP005.toString()) ){
             //responce fail
-            snackbar.setAction(R.string.re_try,view -> mBinding.txtResend.performClick());
+            //otp expired OTP008
+            snackbar.setAction(R.string.resend,view -> {mBinding.txtResend.performClick();
+            snackbar.dismiss();});
         }
 
         snackbar.show();
     }
 
-    // OTp verify event
+
 
     @Override
-    public void onOTPVerifySuccess(SendOTPResponse sendOTPResponse) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==Constants.FORGOT_PASSWORD && resultCode==RESULT_OK){
+            if(null!=data){
+                setResult(RESULT_OK,data);
+                finish();
+            }
+        }
+    }
 
-        //Toast.makeText(this, R.string.otp_verify_sucessfully, Toast.LENGTH_SHORT).show();
+    // OTP verify event
+
+    @Override
+    public void onOTPVerifySuccess(VerifyOTPResponse response) {
 
         if(isFromSignUp){
             Intent intent=new Intent();
             setResult(RESULT_OK,intent);
             finish();
-        }else {
+        }else if(isForPasswordUpdate){
             setVisibilityProgressbar(false);
             Intent intent = new Intent(this, UpdatePasswordActivity.class);
-            intent.putExtra(getString(R.string.send_email_response_obj), sendOTPResponse);
-            startActivity(intent);
+            intent.putExtra(getString(R.string.verify_otp_response_obj), response);
+            intent.putExtra(getString(R.string.is_password_update_key),Boolean.TRUE);
+            startActivityForResult(intent,Constants.FORGOT_PASSWORD);
+        }else if(isForVerifyEmail){
+            Intent intent=new Intent();
+            intent.putExtra(getString(R.string.user_obj_key),response.getUser());
+            setResult(RESULT_OK,intent);
             finish();
         }
 
     }
 
     @Override
-    public void onOTPVerifyFail(SendOTPResponse sendOTPResponse) {
-
+    public void onOTPVerifyFail(VerifyOTPResponse response) {
         setVisibilityProgressbar(false);
+        if(!response.getErrors().isEmpty()){
+            for (Error error:response.getErrors()) {
+                switch (error.toIntValue()){
+                    case 1:
+                    case 2:
+                        Toast.makeText(this, response.getErrors().get(0).getMessage(), Toast.LENGTH_SHORT).show();
+                        break;
+                    case 7:
+                        setSnackBar(error.getMessage(),"");
+                        break;
+                }
+            }
+        }
     }
 
     @Override
@@ -186,14 +238,14 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
     }
 
     @Override
-    public void onOTPExpired(SendOTPResponse sendOTPResponse) {
-
-        Toast.makeText(this, getString(R.string.otp_expired), Toast.LENGTH_SHORT).show();
+    public void onOTPExpired(VerifyOTPResponse response) {
+        //Toast.makeText(this, getString(R.string.otp_expired), Toast.LENGTH_SHORT).show();
         setVisibilityProgressbar(false);
+        setSnackBar(getString(R.string.otp_expired),ERROR_CODE.OTP008.toString());
     }
 
     @Override
-    public void onOTPNotMatch(SendOTPResponse sendOTPResponse) {
+    public void onOTPNotMatch(VerifyOTPResponse response) {
         Toast.makeText(this, getString(R.string.otp_does_not_match), Toast.LENGTH_SHORT).show();
         setVisibilityProgressbar(false);
     }
@@ -370,6 +422,16 @@ public class VerifyEmailActivity extends AppCompatActivity implements OnSendOTPE
         mBinding.otp5.setText("");
         mBinding.otp6.setText("");
         mBinding.otp1.requestFocus();
+    }
+
+
+
+    public static enum ERROR_CODE{
+        OTP001,//enter email id
+        OTP002,//enter otp
+        OTP006,// otp does not match
+        OTP007,// server error
+        OTP008 //OTP Expired
     }
 
 }
